@@ -1,0 +1,2173 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vocab Master - Изучение немецкого языка</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🇩🇪</text></svg>">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #00d4ff;
+            --primary-dark: #0099cc;
+            --success: #00ff88;
+            --warning: #ffaa00;
+            --error: #ff4444;
+            --bg-dark: #0a0a0a;
+            --bg-card: rgba(255,255,255,0.05);
+            --text-light: #b0b0b0;
+            --text-white: #ffffff;
+        }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark), #1a1a2e);
+            color: var(--text-white);
+            overflow-x: hidden;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        #app {
+            min-height: 100vh;
+        }
+        
+        /* Loading Screen */
+        .loading {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, var(--bg-dark), #1a1a2e);
+            gap: 20px;
+        }
+        
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(255,255,255,0.1);
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1.2s linear infinite;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Header */
+        .header {
+            background: rgba(26, 26, 46, 0.95);
+            border-bottom: 1px solid rgba(0, 212, 255, 0.3);
+            padding: 16px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo-text {
+            font-size: 22px;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--primary);
+            font-size: 14px;
+        }
+        
+        /* Main Content */
+        .main-content {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-bottom: 80px;
+        }
+        
+        .card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        }
+        
+        h1 {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 28px;
+            margin-bottom: 16px;
+        }
+        
+        h2 {
+            color: var(--text-white);
+            font-size: 22px;
+            margin-bottom: 16px;
+        }
+        
+        h3 {
+            color: var(--text-white);
+            font-size: 18px;
+            margin-bottom: 12px;
+        }
+        
+        p {
+            color: var(--text-light);
+            margin-bottom: 16px;
+        }
+        
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--text-white);
+        }
+        
+        .btn-secondary {
+            background: rgba(42, 42, 42, 0.7);
+            color: var(--text-white);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #00cc6a);
+            color: var(--text-white);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning), #cc8800);
+            color: var(--text-white);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, var(--error), #cc3636);
+            color: var(--text-white);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        /* Grid Layouts */
+        .grid {
+            display: grid;
+            gap: 16px;
+            margin-top: 20px;
+        }
+        
+        .grid-2 {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+        
+        .grid-3 {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+        
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+        
+        .stat {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-top: 5px;
+        }
+        
+        /* Navigation */
+        .navigation {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(26, 26, 46, 0.95);
+            border-top: 1px solid rgba(0, 212, 255, 0.3);
+            padding: 12px 20px;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+        
+        .nav-content {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+            border-radius: 10px;
+            min-width: 70px;
+        }
+        
+        .nav-item.active {
+            color: var(--primary);
+            background: rgba(0, 212, 255, 0.1);
+        }
+        
+        .nav-icon {
+            font-size: 20px;
+        }
+        
+        /* Topic Cards */
+        .topic-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .topic-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 25px rgba(0, 212, 255, 0.2);
+        }
+        
+        .topic-icon {
+            font-size: 36px;
+            margin-bottom: 12px;
+        }
+        
+        .topic-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: var(--text-white);
+        }
+        
+        .topic-count {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+        
+        /* Word Cards */
+        .word-card {
+            text-align: center;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .word-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .word-original {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+        
+        .word-translation {
+            font-size: 18px;
+            color: var(--text-light);
+        }
+        
+        /* Flip Cards */
+        .flip-card {
+            perspective: 1000px;
+            cursor: pointer;
+            height: 180px;
+        }
+        
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .flip-card-back {
+            transform: rotateY(180deg);
+            background: rgba(0, 212, 255, 0.1);
+        }
+        
+        .pronunciation-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+            padding: 8px;
+            border-radius: 50%;
+        }
+        
+        .pronunciation-btn:hover {
+            background: rgba(0, 212, 255, 0.1);
+            transform: scale(1.1);
+        }
+        
+        /* Test Styles */
+        .test-word {
+            text-align: center;
+            padding: 30px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 16px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .test-options {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .option-btn {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: rgba(42, 42, 42, 0.7);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            color: var(--text-white);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+        
+        .option-btn:hover {
+            background: rgba(60, 60, 60, 0.7);
+            transform: translateY(-2px);
+        }
+        
+        .option-btn.correct {
+            background: rgba(0, 255, 136, 0.2);
+            border-color: var(--success);
+        }
+        
+        .option-btn.incorrect {
+            background: rgba(255, 68, 68, 0.2);
+            border-color: var(--error);
+        }
+        
+        .option-status {
+            font-size: 18px;
+            margin-left: 10px;
+        }
+        
+        .test-input {
+            width: 100%;
+            padding: 16px 20px;
+            background: rgba(42, 42, 42, 0.7);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            color: var(--text-white);
+            font-size: 16px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .test-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+        }
+        
+        .test-input.correct {
+            border-color: var(--success);
+            background: rgba(0, 255, 136, 0.1);
+        }
+        
+        .test-input.incorrect {
+            border-color: var(--error);
+            background: rgba(255, 68, 68, 0.1);
+        }
+        
+        .test-input.acceptable {
+            border-color: var(--warning);
+            background: rgba(255, 170, 0, 0.1);
+        }
+        
+        .test-result {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            background: rgba(42, 42, 42, 0.7);
+            border-radius: 10px;
+            border-left: 4px solid transparent;
+        }
+        
+        .result-item.correct {
+            border-left-color: var(--success);
+        }
+        
+        .result-item.incorrect {
+            border-left-color: var(--error);
+        }
+        
+        .result-item.acceptable {
+            border-left-color: var(--warning);
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            transition: width 0.5s ease;
+        }
+        
+        /* Settings */
+        .settings-panel {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 16px;
+        }
+        
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding: 12px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.03);
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #333;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .toggle-slider {
+            background-color: var(--primary);
+        }
+        
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+        
+        /* Utility Classes */
+        .hidden {
+            display: none !important;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        .mb-0 {
+            margin-bottom: 0;
+        }
+        
+        .mt-20 {
+            margin-top: 20px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Media Queries */
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 15px;
+                padding-bottom: 80px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .word-original {
+                font-size: 24px;
+            }
+            
+            .flip-card {
+                height: 160px;
+            }
+            
+            .header-content {
+                padding: 0 10px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 10px;
+                padding-bottom: 80px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-item {
+                font-size: 11px;
+                padding: 6px 10px;
+                min-width: 60px;
+            }
+            
+            .nav-icon {
+                font-size: 18px;
+            }
+            
+            .flip-card {
+                height: 140px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            h2 {
+                font-size: 20px;
+            }
+        }
+        
+        @media (max-width: 360px) {
+            .logo-text {
+                font-size: 18px;
+            }
+            
+            .user-info {
+                font-size: 12px;
+            }
+            
+            .nav-item {
+                font-size: 10px;
+                padding: 4px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="loading">
+            <div class="spinner"></div>
+            <h2 style="margin-top: 20px; color: var(--primary);">Vocab Master</h2>
+            <p style="color: var(--text-light); margin-top: 10px;">Загрузка приложения...</p>
+        </div>
+    </div>
+
+    <script>
+        // ==================== КОНФИГУРАЦИЯ ПРИЛОЖЕНИЯ ====================
+        const APP_CONFIG = {
+            name: "Vocab Master",
+            version: "1.0.0",
+            author: "Vocab Team"
+        };
+
+        // ==================== СЛОВАРЬ НЕМЕЦКИХ СЛОВ ====================
+        const WORD_TOPICS = {
+            basic: {
+                id: 'basic',
+                name: 'Учёба',
+                icon: '📚',
+                words: [
+                    { id: 1, original: 'lernen', translation: 'учиться' },
+                    { id: 2, original: 'lehren', translation: 'учить' },
+                    { id: 3, original: 'lesen', translation: 'читать' },
+                    { id: 4, original: 'fragen', translation: 'спрашивать' },
+                    { id: 5, original: 'antworten', translation: 'отвечать' },
+                    { id: 6, original: 'schreiben', translation: 'писать' },
+                    { id: 7, original: 'üben', translation: 'упражнять' },
+                    { id: 8, original: 'übersetzen', translation: 'переводить' },
+                    { id: 9, original: 'verstehen', translation: 'понимать' },
+                    { id: 10, original: 'wiederholen', translation: 'повторять' },
+                    { id: 11, original: 'der Fehler', translation: 'ошибка' },
+                    { id: 12, original: 'korrigieren', translation: 'исправлять' },
+                    { id: 13, original: 'die Vokabel', translation: 'слово' },
+                    { id: 14, original: 'erklären', translation: 'объяснять' },
+                    { id: 15, original: 'sprechen', translation: 'говорить' },
+                    { id: 16, original: 'die Sprache', translation: 'язык' },
+                    { id: 17, original: 'die Aussprache', translation: 'произношение' },
+                    { id: 18, original: 'unterrichten', translation: 'преподавать' },
+                    { id: 19, original: 'der Unterricht', translation: 'преподавание' },
+                    { id: 20, original: 'die Woche', translation: 'неделя' }
+                ]
+            },
+            home: {
+                id: 'home',
+                name: 'Дом и квартира',
+                icon: '🏠',
+                words: [
+                    { id: 21, original: 'wohnen', translation: 'жить' },
+                    { id: 22, original: 'die Wohnung', translation: 'квартира' },
+                    { id: 23, original: 'das Zimmer', translation: 'комната' },
+                    { id: 24, original: 'das Einfamilienhaus', translation: 'дом для одной семьи' },
+                    { id: 25, original: 'der Flur', translation: 'коридор' },
+                    { id: 26, original: 'die Küche', translation: 'кухня' },
+                    { id: 27, original: 'das Bad', translation: 'ванная комната' },
+                    { id: 28, original: 'das WC', translation: 'туалет' },
+                    { id: 29, original: 'es gibt', translation: 'есть, имеется' },
+                    { id: 30, original: 'die Wasserleitung', translation: 'водопровод' },
+                    { id: 31, original: 'die Zentralheizung', translation: 'центральное отопление' },
+                    { id: 32, original: 'der Fahrstuhl', translation: 'лифт' },
+                    { id: 33, original: 'der Stock', translation: 'этаж' },
+                    { id: 36, original: 'die Wand', translation: 'стена' },
+                    { id: 37, original: 'die Ecke', translation: 'угол' },
+                    { id: 39, original: 'der Fussboden', translation: 'пол' },
+                    { id: 40, original: 'die Möbel', translation: 'мебель' },
+                    { id: 41, original: 'der Schrank', translation: 'шкаф' },
+                    { id: 42, original: 'der Kleiderschrank', translation: 'шкаф для одежды' },
+                    { id: 43, original: 'der Geschirrschrank', translation: 'шкаф для посуды' },
+                    { id: 44, original: 'der Bücherschrank', translation: 'шкаф для книг' },
+                    { id: 45, original: 'das Bett', translation: 'кровать' },
+                    { id: 46, original: 'das Sofa', translation: 'диван' },
+                    { id: 47, original: 'der Stuhl', translation: 'стул' },
+                    { id: 48, original: 'der Sessel', translation: 'кресло' },
+                    { id: 49, original: 'das Regal', translation: 'полка' },
+                    { id: 50, original: 'das Bücherregal', translation: 'книжная полка' },
+                    { id: 51, original: 'der Puff', translation: 'банкетка, пуфик' },
+                    { id: 52, original: 'der Fernseher', translation: 'телевизор' },
+                    { id: 53, original: 'der Teppich', translation: 'ковёр' }
+                ]
+            },
+            prepositions: {
+                id: 'prepositions',
+                name: 'Предлоги',
+                icon: '📍',
+                words: [
+                    { id: 55, original: 'links', translation: 'слева' },
+                    { id: 56, original: 'rechts', translation: 'справа' },
+                    { id: 57, original: 'über', translation: 'над' },
+                    { id: 58, original: 'unter', translation: 'под' },
+                    { id: 59, original: 'neben', translation: 'рядом' },
+                    { id: 60, original: 'hinten', translation: 'за' },
+                    { id: 61, original: 'gegenüber', translation: 'напротив' },
+                    { id: 62, original: 'auf', translation: 'на (гориз. пов.)' },
+                    { id: 63, original: 'an oder am', translation: 'на (вертик. пов.)' },
+                    { id: 64, original: 'in oder im', translation: 'в' },
+                    { id: 65, original: 'vor', translation: 'перед' },
+                    { id: 66, original: 'zwischen', translation: 'между' }
+                ]
+            },
+            actions: {
+                id: 'actions',
+                name: 'Остальное',
+                icon: '⚡',
+                words: [
+                    { id: 34, original: 'essen', translation: 'есть, кушать' },
+                    { id: 35, original: 'schlafen', translation: 'спать' },
+                    { id: 38, original: 'die Nacht', translation: 'ночь' },
+                    { id: 54, original: 'bestehen', translation: 'состояние' }
+                ]
+            },
+            workday: {
+                id: 'workday',
+                name: 'Рабочий день',
+                icon: '💼',
+                words: [
+                    { id: 100, original: 'der Arbeitstag', translation: 'рабочий день' },
+                    { id: 101, original: 'von A bis Z', translation: 'от А до Я' },
+                    { id: 102, original: 'aufstehen', translation: 'вставать' },
+                    { id: 103, original: 'putzen', translation: 'чистить' },
+                    { id: 104, original: 'der Zahn', translation: 'зуб' },
+                    { id: 105, original: 'waschen', translation: 'мыть' },
+                    { id: 106, original: 'anziehen', translation: 'надевать' },
+                    { id: 107, original: 'sich anziehen', translation: 'одеваться' },
+                    { id: 108, original: 'frühstücken', translation: 'завтракать' },
+                    { id: 109, original: 'gewöhnlich', translation: 'обычный' },
+                    { id: 110, original: 'das Geschirr', translation: 'посуда' },
+                    { id: 111, original: 'das Glas', translation: 'стакан' },
+                    { id: 112, original: 'die Tasse', translation: 'чашка' },
+                    { id: 113, original: 'die Untertasse', translation: 'блюдце' },
+                    { id: 114, original: 'der Teller', translation: 'тарелка' },
+                    { id: 115, original: 'abtrocknen', translation: 'вытирать' },
+                    { id: 116, original: 'der Fuss', translation: 'нога' },
+                    { id: 117, original: 'zu Fuss gehen', translation: 'идти пешком' },
+                    { id: 118, original: 'dauern', translation: 'длиться' },
+                    { id: 119, original: 'das Ende', translation: 'конец' },
+                    { id: 120, original: 'täglich', translation: 'ежедневно' },
+                    { id: 121, original: 'billig', translation: 'дешёвый' },
+                    { id: 122, original: 'der Raum', translation: 'комната' },
+                    { id: 123, original: 'hell', translation: 'светлый' },
+                    { id: 124, original: 'suchen', translation: 'искать' },
+                    { id: 125, original: 'kostenlos', translation: 'бесплатный' },
+                    { id: 126, original: 'die Mensa', translation: 'студенческая столовая' }
+                ]
+            }
+        };
+
+        // ==================== НАСТРОЙКИ ПРИЛОЖЕНИЯ ====================
+        const DEFAULT_SETTINGS = {
+            soundEnabled: true,
+            animationsEnabled: true,
+            difficulty: 'normal',
+            theme: 'dark'
+        };
+
+        // ==================== СОСТОЯНИЕ ПРИЛОЖЕНИЯ ====================
+        const AppState = {
+            currentPage: 'home',
+            currentTopic: null,
+            user: { 
+                name: 'Студент', 
+                role: 'user',
+                level: 'beginner'
+            },
+            testMode: null,
+            testType: null,
+            currentTest: null,
+            testResults: [],
+            currentWordIndex: 0,
+            score: 0,
+            incorrectAnswers: [],
+            userProgress: null,
+            settings: null
+        };
+
+        // ==================== УТИЛИТЫ ====================
+        const Utils = {
+            // Загрузка данных из localStorage
+            loadFromStorage(key, defaultValue = null) {
+                try {
+                    const item = localStorage.getItem(key);
+                    return item ? JSON.parse(item) : defaultValue;
+                } catch (error) {
+                    console.error(`Ошибка загрузки ${key}:`, error);
+                    return defaultValue;
+                }
+            },
+
+            // Сохранение данных в localStorage
+            saveToStorage(key, value) {
+                try {
+                    localStorage.setItem(key, JSON.stringify(value));
+                    return true;
+                } catch (error) {
+                    console.error(`Ошибка сохранения ${key}:`, error);
+                    return false;
+                }
+            },
+
+            // Перемешивание массива
+            shuffleArray(array) {
+                const shuffled = [...array];
+                for (let i = shuffled.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                }
+                return shuffled;
+            },
+
+            // Проверка ответа с допущением ошибок
+            isAnswerAcceptable(userAnswer, correctAnswer) {
+                userAnswer = userAnswer.toLowerCase().trim();
+                correctAnswer = correctAnswer.toLowerCase().trim();
+                
+                if (userAnswer === correctAnswer) {
+                    return { acceptable: true, exact: true };
+                }
+                
+                // Допускаем 1 ошибку (опечатку)
+                if (Math.abs(userAnswer.length - correctAnswer.length) > 1) {
+                    return { acceptable: false, exact: false };
+                }
+                
+                // Простая проверка расстояния Левенштейна (для 1 ошибки)
+                let errors = 0;
+                const minLength = Math.min(userAnswer.length, correctAnswer.length);
+                
+                for (let i = 0; i < minLength; i++) {
+                    if (userAnswer[i] !== correctAnswer[i]) {
+                        errors++;
+                        if (errors > 1) return { acceptable: false, exact: false };
+                    }
+                }
+                
+                // Если разница в длине - это дополнительная ошибка
+                if (userAnswer.length !== correctAnswer.length) {
+                    errors++;
+                }
+                
+                return { 
+                    acceptable: errors <= 1, 
+                    exact: false,
+                    suggestion: correctAnswer
+                };
+            },
+
+            // Произношение слова
+            speakWord(text, lang = 'de-DE') {
+                if (!AppState.settings.soundEnabled) return;
+                
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                    
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = lang;
+                    utterance.rate = 0.8;
+                    utterance.pitch = 1;
+                    window.speechSynthesis.speak(utterance);
+                }
+            },
+
+            // Получение всех слов
+            getAllWords() {
+                let allWords = [];
+                for (const topicKey in WORD_TOPICS) {
+                    allWords = allWords.concat(WORD_TOPICS[topicKey].words);
+                }
+                return allWords;
+            },
+
+            // Получение описания типа теста
+            getTestTypeDescription(type) {
+                const descriptions = {
+                    'choice': 'Тест с выбором ответа',
+                    'writing': 'Письменный тест',
+                    'reverse': 'Перевод с русского на немецкий'
+                };
+                return descriptions[type] || 'Тест';
+            }
+        };
+
+        // ==================== УПРАВЛЕНИЕ ПРОГРЕССОМ ====================
+        const ProgressManager = {
+            // Загрузка прогресса
+            loadProgress() {
+                return Utils.loadFromStorage('vocabMasterProgress', {
+                    learnedWords: [],
+                    testResults: [],
+                    totalTests: 0,
+                    averageScore: 0,
+                    topicProgress: {},
+                    totalStudyTime: 0,
+                    wordsLearned: 0
+                });
+            },
+
+            // Сохранение прогресса
+            saveProgress() {
+                return Utils.saveToStorage('vocabMasterProgress', AppState.userProgress);
+            },
+
+            // Обновление статистики после теста
+            updateTestStats() {
+                AppState.userProgress.totalTests++;
+                
+                const accuracy = (AppState.score / AppState.testResults.length) * 100;
+                const totalScore = AppState.userProgress.averageScore * (AppState.userProgress.totalTests - 1) + accuracy;
+                AppState.userProgress.averageScore = totalScore / AppState.userProgress.totalTests;
+                
+                // Добавляем результат теста
+                AppState.userProgress.testResults.push({
+                    date: new Date().toISOString(),
+                    score: AppState.score,
+                    total: AppState.testResults.length,
+                    accuracy: Math.round(accuracy),
+                    topic: AppState.currentTopic,
+                    type: AppState.testType,
+                    mode: AppState.testMode
+                });
+                
+                // Сохраняем только последние 20 результатов
+                if (AppState.userProgress.testResults.length > 20) {
+                    AppState.userProgress.testResults = AppState.userProgress.testResults.slice(-20);
+                }
+                
+                this.saveProgress();
+            },
+
+            // Получение последних результатов
+            getRecentResults(limit = 3) {
+                return AppState.userProgress.testResults
+                    .slice(-limit)
+                    .reverse();
+            }
+        };
+
+        // ==================== УПРАВЛЕНИЕ НАСТРОЙКАМИ ====================
+        const SettingsManager = {
+            // Загрузка настроек
+            loadSettings() {
+                return Utils.loadFromStorage('vocabMasterSettings', DEFAULT_SETTINGS);
+            },
+
+            // Сохранение настроек
+            saveSettings() {
+                return Utils.saveToStorage('vocabMasterSettings', AppState.settings);
+            },
+
+            // Обновление настройки
+            updateSetting(key, value) {
+                AppState.settings[key] = value;
+                this.saveSettings();
+            }
+        };
+
+        // ==================== СИСТЕМА ТЕСТИРОВАНИЯ ====================
+        const TestSystem = {
+            // Начало теста
+            startTest(mode, topicId = null) {
+                AppState.testMode = mode;
+                
+                // Выбор слов для теста
+                if (topicId) {
+                    AppState.currentTest = Utils.shuffleArray([...WORD_TOPICS[topicId].words]);
+                    AppState.currentTopic = topicId;
+                } else if (mode === 'difficult') {
+                    AppState.currentTest = Utils.shuffleArray(Utils.getAllWords()).slice(0, 10);
+                    AppState.currentTopic = 'all';
+                } else {
+                    AppState.currentTest = Utils.shuffleArray(Utils.getAllWords());
+                    AppState.currentTopic = 'all';
+                }
+                
+                AppState.currentWordIndex = 0;
+                AppState.score = 0;
+                AppState.incorrectAnswers = [];
+                AppState.testResults = [];
+                
+                this.showTestQuestion();
+            },
+
+            // Показать вопрос теста
+            showTestQuestion() {
+                if (AppState.currentWordIndex >= AppState.currentTest.length) {
+                    if (AppState.testMode === 'untilCorrect' && AppState.incorrectAnswers.length > 0) {
+                        AppState.currentTest = [...AppState.incorrectAnswers];
+                        AppState.currentWordIndex = 0;
+                        AppState.incorrectAnswers = [];
+                    } else {
+                        ProgressManager.updateTestStats();
+                        this.showTestResults();
+                        return;
+                    }
+                }
+                
+                const currentWord = AppState.currentTest[AppState.currentWordIndex];
+                
+                switch (AppState.testType) {
+                    case 'choice':
+                        this.showChoiceTest(currentWord);
+                        break;
+                    case 'writing':
+                        this.showWritingTest(currentWord);
+                        break;
+                    case 'reverse':
+                        this.showReverseTest(currentWord);
+                        break;
+                }
+            },
+
+            // Тест с выбором ответа
+            showChoiceTest(word) {
+                const options = [word.translation];
+                const allWords = AppState.currentTopic && AppState.currentTopic !== 'all' ? 
+                    WORD_TOPICS[AppState.currentTopic].words : Utils.getAllWords();
+                
+                const otherWords = allWords
+                    .filter(w => w.id !== word.id)
+                    .sort(() => Math.random() - 0.5)
+                    .slice(0, 3)
+                    .map(w => w.translation);
+                
+                const allOptions = Utils.shuffleArray([...options, ...otherWords]);
+                const topic = AppState.currentTopic && AppState.currentTopic !== 'all' ? 
+                    WORD_TOPICS[AppState.currentTopic] : null;
+                
+                const app = document.getElementById('app');
+                app.innerHTML = this.generateTestHTML(word, allOptions, topic);
+                
+                document.getElementById('answer-input')?.focus();
+            },
+
+            // Письменный тест
+            showWritingTest(word) {
+                const topic = AppState.currentTopic && AppState.currentTopic !== 'all' ? 
+                    WORD_TOPICS[AppState.currentTopic] : null;
+                
+                const app = document.getElementById('app');
+                app.innerHTML = this.generateWritingTestHTML(word, topic);
+                document.getElementById('answer-input').focus();
+            },
+
+            // Обратный тест
+            showReverseTest(word) {
+                const topic = AppState.currentTopic && AppState.currentTopic !== 'all' ? 
+                    WORD_TOPICS[AppState.currentTopic] : null;
+                
+                const app = document.getElementById('app');
+                app.innerHTML = this.generateReverseTestHTML(word, topic);
+                document.getElementById('answer-input').focus();
+            },
+
+            // Проверка ответа в тесте с выбором
+            checkChoiceAnswer(selected, correct) {
+                const options = document.querySelectorAll('.option-btn');
+                const nextBtn = document.getElementById('next-btn');
+                
+                options.forEach(option => {
+                    const optionText = option.querySelector('span:first-child').textContent;
+                    const status = option.querySelector('.option-status');
+                    
+                    option.style.pointerEvents = 'none';
+                    
+                    if (optionText === correct) {
+                        option.classList.add('correct');
+                        status.innerHTML = '✓';
+                        status.style.color = 'var(--success)';
+                    }
+                    
+                    if (optionText === selected && optionText !== correct) {
+                        option.classList.add('incorrect');
+                        status.innerHTML = '✗';
+                        status.style.color = 'var(--error)';
+                    }
+                });
+                
+                const isCorrect = selected === correct;
+                this.recordTestResult(isCorrect, selected, correct);
+                
+                if (isCorrect) {
+                    AppState.score++;
+                } else {
+                    AppState.incorrectAnswers.push(AppState.currentTest[AppState.currentWordIndex]);
+                }
+                
+                nextBtn.classList.remove('hidden');
+            },
+
+            // Проверка письменного ответа
+            checkWritingAnswer() {
+                const input = document.getElementById('answer-input');
+                const resultMessage = document.getElementById('result-message');
+                const nextBtn = document.getElementById('next-btn');
+                const currentWord = AppState.currentTest[AppState.currentWordIndex];
+                
+                const userAnswer = input.value.trim();
+                const correctAnswer = currentWord.translation;
+                const checkResult = Utils.isAnswerAcceptable(userAnswer, correctAnswer);
+                
+                this.handleAnswerResult(input, resultMessage, checkResult, userAnswer, correctAnswer);
+                nextBtn.classList.remove('hidden');
+            },
+
+            // Проверка ответа в обратном тесте
+            checkReverseAnswer() {
+                const input = document.getElementById('answer-input');
+                const resultMessage = document.getElementById('result-message');
+                const nextBtn = document.getElementById('next-btn');
+                const currentWord = AppState.currentTest[AppState.currentWordIndex];
+                
+                const userAnswer = input.value.trim();
+                const correctAnswer = currentWord.original;
+                const checkResult = Utils.isAnswerAcceptable(userAnswer, correctAnswer);
+                
+                this.handleAnswerResult(input, resultMessage, checkResult, userAnswer, correctAnswer);
+                nextBtn.classList.remove('hidden');
+            },
+
+            // Обработка результата ответа
+            handleAnswerResult(input, resultMessage, checkResult, userAnswer, correctAnswer) {
+                const currentWord = AppState.currentTest[AppState.currentWordIndex];
+                
+                if (checkResult.exact) {
+                    input.classList.add('correct');
+                    resultMessage.innerHTML = '<p style="color: var(--success);">✓ Правильно!</p>';
+                    AppState.score++;
+                } else if (checkResult.acceptable) {
+                    input.classList.add('acceptable');
+                    resultMessage.innerHTML = `
+                        <p style="color: var(--warning);">⚠ Почти правильно!</p>
+                        <p style="color: var(--success);">Правильнее: ${correctAnswer}</p>
+                    `;
+                    AppState.score++;
+                } else {
+                    input.classList.add('incorrect');
+                    resultMessage.innerHTML = `
+                        <p style="color: var(--error);">✗ Неправильно</p>
+                        <p style="color: var(--success);">Правильный ответ: ${correctAnswer}</p>
+                    `;
+                    AppState.incorrectAnswers.push(currentWord);
+                }
+                
+                this.recordTestResult(checkResult.exact || checkResult.acceptable, userAnswer, correctAnswer);
+                input.disabled = true;
+            },
+
+            // Запись результата теста
+            recordTestResult(isCorrect, selected, correct) {
+                AppState.testResults.push({
+                    word: AppState.currentTest[AppState.currentWordIndex],
+                    selected,
+                    correct,
+                    isCorrect,
+                    acceptable: isCorrect
+                });
+            },
+
+            // Следующий вопрос
+            nextQuestion() {
+                AppState.currentWordIndex++;
+                this.showTestQuestion();
+            },
+
+            // Показать результаты теста
+            showTestResults() {
+                const accuracy = Math.round((AppState.score / AppState.testResults.length) * 100);
+                const topic = AppState.currentTopic && AppState.currentTopic !== 'all' ? 
+                    WORD_TOPICS[AppState.currentTopic] : null;
+                
+                let resultEmoji, resultText;
+                if (accuracy >= 90) {
+                    resultEmoji = '🎉';
+                    resultText = 'Отлично!';
+                } else if (accuracy >= 70) {
+                    resultEmoji = '👍';
+                    resultText = 'Хорошо!';
+                } else if (accuracy >= 50) {
+                    resultEmoji = '💪';
+                    resultText = 'Неплохо!';
+                } else {
+                    resultEmoji = '📚';
+                    resultText = 'Продолжайте учиться!';
+                }
+                
+                const app = document.getElementById('app');
+                app.innerHTML = this.generateResultsHTML(accuracy, resultEmoji, resultText, topic);
+            },
+
+            // Генерация HTML для тестов (вспомогательные методы)
+            generateTestHTML(word, options, topic) {
+                return `
+                    <header class="header">
+                        <div class="header-content">
+                            <div class="logo-text">${topic ? topic.icon + ' ' + topic.name : '🎯 Тест'}</div>
+                            <div style="color: var(--primary);">
+                                ${AppState.currentWordIndex + 1}/${AppState.currentTest.length}
+                            </div>
+                        </div>
+                    </header>
+
+                    <main class="main-content">
+                        <div class="test-word fade-in">
+                            <h1 style="font-size: 36px; margin-bottom: 10px;">${word.original}</h1>
+                            <p style="color: var(--text-light);">Переведите на русский</p>
+                            <button class="pronunciation-btn" onclick="Utils.speakWord('${word.original}')" style="margin-top: 15px;">
+                                🔊 Произнести
+                            </button>
+                        </div>
+
+                        <div class="test-options" id="options-container">
+                            ${options.map(option => `
+                                <button class="option-btn fade-in" onclick="TestSystem.checkChoiceAnswer('${option.replace(/'/g, "\\'")}', '${word.translation.replace(/'/g, "\\'")}')">
+                                    <span>${option}</span>
+                                    <span class="option-status"></span>
+                                </button>
+                            `).join('')}
+                        </div>
+
+                        <button class="btn btn-primary hidden" id="next-btn" onclick="TestSystem.nextQuestion()">
+                            ➡️ Следующее слово
+                        </button>
+
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${(AppState.currentWordIndex / AppState.currentTest.length) * 100}%"></div>
+                        </div>
+                    </main>
+                    ${this.generateNavigation()}
+                `;
+            },
+
+            generateWritingTestHTML(word, topic) {
+                return `
+                    <header class="header">
+                        <div class="header-content">
+                            <div class="logo-text">✏️ Письменный тест</div>
+                            <div style="color: var(--primary);">
+                                ${AppState.currentWordIndex + 1}/${AppState.currentTest.length}
+                            </div>
+                        </div>
+                    </header>
+
+                    <main class="main-content">
+                        <div class="test-word fade-in">
+                            <h1 style="font-size: 36px; margin-bottom: 10px;">${word.original}</h1>
+                            <p style="color: var(--text-light);">Напишите перевод на русском</p>
+                            <button class="pronunciation-btn" onclick="Utils.speakWord('${word.original}')" style="margin-top: 15px;">
+                                🔊 Произнести
+                            </button>
+                        </div>
+
+                        <input type="text" class="test-input fade-in" id="answer-input" placeholder="Введите перевод..." onkeypress="if(event.key === 'Enter') TestSystem.checkWritingAnswer()">
+                        <div id="result-message"></div>
+                        <button class="btn btn-primary hidden" id="next-btn" onclick="TestSystem.nextQuestion()">➡️ Следующее слово</button>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${(AppState.currentWordIndex / AppState.currentTest.length) * 100}%"></div>
+                        </div>
+                    </main>
+                    ${this.generateNavigation()}
+                `;
+            },
+
+            generateReverseTestHTML(word, topic) {
+                return `
+                    <header class="header">
+                        <div class="header-content">
+                            <div class="logo-text">🔄 Обратный тест</div>
+                            <div style="color: var(--primary);">
+                                ${AppState.currentWordIndex + 1}/${AppState.currentTest.length}
+                            </div>
+                        </div>
+                    </header>
+
+                    <main class="main-content">
+                        <div class="test-word fade-in">
+                            <h1 style="font-size: 36px; margin-bottom: 10px;">${word.translation}</h1>
+                            <p style="color: var(--text-light);">Напишите перевод на немецком</p>
+                        </div>
+
+                        <input type="text" class="test-input fade-in" id="answer-input" placeholder="Введите перевод..." onkeypress="if(event.key === 'Enter') TestSystem.checkReverseAnswer()">
+                        <div id="result-message"></div>
+                        <button class="btn btn-primary hidden" id="next-btn" onclick="TestSystem.nextQuestion()">➡️ Следующее слово</button>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${(AppState.currentWordIndex / AppState.currentTest.length) * 100}%"></div>
+                        </div>
+                    </main>
+                    ${this.generateNavigation()}
+                `;
+            },
+
+            generateResultsHTML(accuracy, emoji, text, topic) {
+                return `
+                    <header class="header">
+                        <div class="header-content">
+                            <div class="logo-text">📊 Результаты${topic ? ': ' + topic.name : ''}</div>
+                            <button onclick="UI.showMainPage()" style="background: none; border: none; color: var(--primary); cursor: pointer; font-size: 18px;">🏠</button>
+                        </div>
+                    </header>
+
+                    <main class="main-content">
+                        <div class="card fade-in">
+                            <div class="test-result">
+                                <h1>${emoji} ${text}</h1>
+                                <p>Результаты теста${topic ? ' по теме "' + topic.name + '"' : ''}:</p>
+                                <div style="font-size: 48px; color: var(--primary); margin: 20px 0;">${accuracy}%</div>
+                                <p>Правильных ответов: ${AppState.score} из ${AppState.testResults.length}</p>
+                            </div>
+                        </div>
+
+                        ${AppState.incorrectAnswers.length > 0 ? `
+                        <div class="card fade-in">
+                            <h3>📝 Ошибки для повторения:</h3>
+                            <div class="test-options">
+                                ${AppState.testResults.map((result, index) => {
+                                    if (!result.isCorrect && !result.acceptable) {
+                                        return `
+                                            <div class="result-item incorrect">
+                                                <div>
+                                                    <strong>${result.word.original}</strong>
+                                                    <div style="color: var(--text-light);">${result.word.translation}</div>
+                                                    <div style="color: var(--error); font-size: 12px;">Ваш ответ: ${result.selected}</div>
+                                                </div>
+                                                <div style="color: var(--error);">✗</div>
+                                            </div>
+                                        `;
+                                    } else if (result.acceptable && !result.isCorrect) {
+                                        return `
+                                            <div class="result-item acceptable">
+                                                <div>
+                                                    <strong>${result.word.original}</strong>
+                                                    <div style="color: var(--text-light);">${result.word.translation}</div>
+                                                    <div style="color: var(--warning); font-size: 12px;">Ваш ответ: ${result.selected}</div>
+                                                </div>
+                                                <div style="color: var(--warning);">⚠</div>
+                                            </div>
+                                        `;
+                                    }
+                                    return '';
+                                }).join('')}
+                            </div>
+                        </div>
+                        ` : ''}
+
+                        <div class="grid grid-2 fade-in">
+                            <button class="btn btn-secondary" onclick="UI.showTestSelection()">
+                                📋 Новый тест
+                            </button>
+                            <button class="btn btn-primary" onclick="${topic ? `UI.showTopicWords('${AppState.currentTopic}')` : 'UI.showTopicsPage()'}">
+                                📚 ${topic ? 'Учить тему' : 'Учить слова'}
+                            </button>
+                        </div>
+                    </main>
+                `;
+            },
+
+            generateNavigation() {
+                return `
+                    <nav class="navigation">
+                        <div class="nav-content">
+                            <button class="nav-item" onclick="UI.showMainPage()">
+                                <span class="nav-icon">🏠</span>
+                                <span>Главная</span>
+                            </button>
+                            <button class="nav-item" onclick="UI.showTopicsPage()">
+                                <span class="nav-icon">📚</span>
+                                <span>Темы</span>
+                            </button>
+                            <button class="nav-item active">
+                                <span class="nav-icon">🎯</span>
+                                <span>Тест</span>
+                            </button>
+                            <button class="nav-item" onclick="UI.showDictionary()">
+                                <span class="nav-icon">📖</span>
+                                <span>Словарь</span>
+                            </button>
+                        </div>
+                    </nav>
+                `;
+            }
+        };
+
+        // ==================== ПОЛЬЗОВАТЕЛЬСКИЙ ИНТЕРФЕЙС ====================
+        const UI = {
+            // Показать главную страницу
+            showMainPage() {
+                AppState.currentPage = 'home';
+                const totalWords = Utils.getAllWords().length;
+                const recentResults = ProgressManager.getRecentResults(3);
+                
+                const app = document.getElementById('app');
+                app.innerHTML = `
+                    <header class="header">
+                        <div class="header-content">
+                            <div class="logo">
+                                <div class="logo-text">${APP_CONFIG.name}</div>
+                            </div>
+                            <div class="user-info">
+                                👤 ${AppState.user.name}
+                            </div>
+                        </div>
+                    </header>
+
+                    <main class="main-content">
+                        <div class="card fade-in">
+                            <h1>🎓 Немецкий язык</h1>
+                            <p>Изучайте немецкие слова с помощью интеллектуальных карточек и тестов. Совершенствуйте свой словарный запас!</p>
+                            
+                            <div class="grid grid-2">
+                                <button class="btn btn-primary" onclick="UI.showTopicsPage()">
+                                    📚 Изучение слов
+                                </button>
+                                <button class="btn btn-secondary" onclick="UI.showTestSelection()">
+                                    🎯 Пройти тест
+                                </button>
+                                <button class="btn btn-secondary" onclick="UI.showDictionary()">
+                                    📖 Весь словарь
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="card fade-in">
+                            <h3>📊 Статистика обучения</h3>
+                            <div class="stats-grid">
+                                <div class="stat">
+                                    <div class="stat-value">${totalWords}</div>
+                                    <div class="stat-label">Всего слов</div>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-value">${Object.keys(WORD_TOPICS).length}</div>
+                                    <div class="stat-label">Тем</div>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-value">${Math.round(AppState.userProgress.averageScore)}%</div>
+                                    <div class="stat-label">Успеваемость</div>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-value">${AppState.userProgress.totalTests}</div>
+                                    <div class="stat-label">Тестов пройдено</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        ${recentResults.length > 0 ? `
+                        <div class="card fade-in">
+                            <h3>📈 Последние результаты</h3>
+                            <div class="test-options">
+                                ${recentResults.map(result => `
+                                    <div class="result-item ${result.accuracy >= 70 ? 'correct' : 'incorrect'}">
+                                        <div>
+                                            <strong>${result.accuracy}%</strong>
+                                            <div style="color: var(--text-light);">${new Date(result.date).toLocaleDateString()}</div>
+                                            <div style="color: var(--text-light); font-size: 10px;">${Utils.getTestTypeDescription(result.type)}</div>
+                                        </div>
+                                        <div>${result.score}/${result.total}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        ` : ''}
+
+                        <div class="card fade-in">
+                            <h3>⚙️ Настройки</h3>
+                            <div class="settings-panel">
+                                <div class="setting-item">
+                                    <span>🔊 Звук произношения</span>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" ${AppState.settings.soundEnabled ? 'checked' : ''} onchange="SettingsManager.updateSetting('soundEnabled', this.checked)">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                                <div class="setting-item">
+                                    <span>🎬 Анимации</span>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" ${AppState.settings.animationsEnabled ? 'checked' : ''} onchange="SettingsManager.updateSetting('animationsEnabled', this.checked)">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+
+                    <nav class="navigation">
+                        <div class="nav-content">
+                            <button class="nav-item active" onclick="UI.showMainPage()">
+                                <span class="nav-icon">🏠</span>
+                                <span>Главная</span>
+                            </button>
+                            <button class="nav-item" onclick="UI.showTopicsPage()">
+                                <span class="nav-icon">📚</span>
+                                <span>Темы</span>
+                            </button>
+                            <button class="nav-item" onclick="UI.showTestSelection()">
+                                <span class="nav-icon">🎯</span>
+                                <span>Тест</span>
+                            </button>
+                            <button class="nav-item" onclick="UI.showDictionary()">
+                                <span class="nav-icon">📖</span>
+                                <span>Словарь</span>
+                            </button>
+                        </div>
+                    </nav>
+                `;
+            },
+
+            // Показать страницу с темами
+            showTopicsPage() {
+                AppState.currentPage = 'topics';
+                const app = document.getElementById('app');
+                app.innerHTML = `
+                    <header class="header">
+                        <div class="header-content">
+                            <div class="logo-text">📚 Темы для изучения</div>
+                            <button onclick="UI.showMainPage()" style="background: none; border: none; color: var(--primary); cursor: pointer; font-size: 18px;">← Назад</button>
+                        </div>
+                    </header>
+
+                    <main class="main-content">
+                        <div class="card fade-in">
+                            <h2>Выберите тему</h2>
+                            <p>Изучайте слова по тематическим группам для лучшего запоминания</p>
+                            
+                            <div class="grid grid-2">
+                                ${Object.values(WORD_TOPICS).map(topic => `
+                                    <div class="topic-card" onclick="UI.showTopicWords('${topic.id}')">
+                                        <div class="topic-icon">${topic.icon}</div>
+                                        <div class="topic-name">${topic.name}</div>
+                                        <div class="topic-count">${topic.words.length} слов</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <div class="card fade-in">
+                            <button class="btn btn-primary" onclick="UI.showAllWords()">
+                                📚 Все слова сразу
+                            </button>
+                        </div>
+                    </main>
+
+                    <nav class="navigation">
+                        <div class="nav-content">
+                            <button class="nav-item" onclick="UI.showMainPage()">
+                                <span class="nav-icon">🏠</span>
+                                <span>Главная</span>
+                            </button>
+                            <button class="nav-item active">
+                                <span class="nav-icon">📚</span>
+                                <span>Темы</span>
+                            </button>
+                            <button class="nav-item" onclick="UI.showTestSelection()">
+                                <span class="nav-icon">🎯</span>
+                                <span>Тест</span>
+                            </button>
+                            <button class="nav-item" onclick="UI.showDictionary()">
+                                <span class="nav-icon">📖</span>
+                                <span>Словарь</span>
+                            </button>
+                        </div>
+                    </nav>
+                `;
+            },
+
+            // Показать слова конкретной темы
+            showTopicWords(topicId) {
+                const topic = WORD_TOPICS[topicId];
+                AppState.currentTopic = topicId;
+                
+                const app = document.getElementById('app');
+                app.innerHTML = `
+                    <header class="header">
+                        <div class="header-content">
+                            <div class="logo-text">${topic.icon} ${topic.name}</div>
+                            <button onclick="UI.showTopicsPage()" style="background: none; border: none; color: var(--primary); cursor: pointer; font-size: 18px;">← Назад</button>
+                        </div>
+                    </header>
+
+                    <main class="main-content">
+                        <div class="card fade-in">
+                            <h2>${topic.name}</h2>
+                            <p>Нажмите на карточку, чтобы увидеть перевод. Используйте кнопку 🔊 для прослушивания произношения.</p>
+                            
+                            <div class="grid grid-2">
+                                ${topic.words.map(word => `
+                                    <div class="flip-card" onclick="UI.flipCard(this)" data-word-id="${word.id}">
+                                        <div class="flip-card-inner">
+                                            <div class="flip-card-front card word-card">
+                                                <div class="word-original">${word.original}</div>
+                                                <button class="pronunciation-btn" onclick="event.stopPropagation(); Utils.speakWord('${word.original}')">
+                                                    🔊
+                                                </button>
+                                                <div style="color: var(--text-light); font-size: 12px; margin-top: 10px;">Нажмите, чтобы перевернуть</div>
+                                            </div>
+                                            <div class="flip-card-back card word-card">
+                                                <div class="word-translation">${word.translation}</div>
+                                                <button class="pronunciation-btn" onclick="event.stopPropagation(); Utils.speakWord('${word.original}')">
+                                                    🔊
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <div class="grid grid-2 fade-in">
+                            <button class="btn btn-secondary" onclick="UI.showTopicTestSelection('${topicId}')">
+                                🎯 Тест по теме
+                            </button>
+                            <button class="btn btn-primary" onclick="UI.showTopicsPage()">
+                                📚 Другие темы
+                            </button>
+                        </div>
+                    </main>
+
+                    <nav class="navigation">
+                        <div class="nav-content">
+                            <button class="nav-item" onclick="UI.showMainPage()">
+                                <span class="nav-icon">🏠</span>
+                                <span>Главная</span>
+                            </button>
+                            <button class="nav-item active">
+                                <span class="nav-icon">📚</span>
+                                <span>Темы</span>
+                            </button>
+                            <button class="nav-item" onclick="UI.showTestSelection()">
+                                <span class="nav-icon">🎯</span>
+                                <span>Тест</span>
+                            </button>
+                            <button class="nav-item" onclick="UI.showDictionary()">
+                                <span class="nav-icon">📖</span>
+                                <span>Словарь</span>
+                            </button>
+                        </div>
+                    </nav>
+                `;
+            },
+
+            // Показать все слова
+            showAllWords() {
+                const app = document.getElementById('app');
+                app.innerHTML = `
+                    <header class="header">
+                        <div class="header-content">
+                            <div class="logo-text">📚 Все слова</div>
+                            <button onclick="UI.showTopicsPage()" style="background: none; border: none; color: var(--primary); cursor: pointer; font-size: 18px;">← Назад</button>
+                        </div>
+                    </header>
+
+                    <main class="main-content">
+                        <div class="card fade-in">
+                            <h2>Все немецкие слова</h2>
+                            <p>Нажмите на карточку, чтобы увидеть перевод. Используйте кнопку 🔊 для прослушивания произношения.</p>
+                            
+                            <div class="grid grid-2">
+                                ${Utils.getAllWords().map(word => `
+                                    <div class="flip-card" onclick="UI.flipCard(this)" data-word-id="${word.id}">
+                                        <div class="flip-card-inner">
+                                            <div class="flip-card-front card word-card">
+                                                <div class="word-original">${word.original}</div>
+                                                <button class="pronunciation-btn" onclick="event.stopPropagation(); Utils.speakWord('${word.original}')">
+                                                    🔊
+                                                </button>
+                                                <div style="color: var(--text-light); font-size: 12px; margin-top: 10px;">Нажмите, чтобы перевернуть</div>
+                                            </div>
+                                            <div class="flip-card-back card word-card">
+                                                <div class="word-translation">${word.translation}</div>
+                                                <button class="pronunciation-btn" onclick="event.stopPropagation(); Utils.speakWord('${word.original}')">
+                                                    🔊
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </main>
+
+                    <nav class="navigation">
+                        <div class="nav-content">
+                            <button class="nav-item" onclick="UI.showMainPage()">
+                                <span class="nav-icon">🏠</span>
+                                <span>Главная</span>
+                            </button>
+                            <button class="nav-item active">
+                                <span class="nav-icon">📚</span>
+                                <span>Темы</span>
+                            </button>
+                            <button class="nav-item" onclick="UI.showTestSelection()">
+                                <span class="nav-icon">🎯</span>
+                                <span>Тест</span>
+                            </button>
+                            <button class="nav-item" onclick="UI.showDictionary()">
+                                <span class="nav-icon">📖</span>
+                                <span>Словарь</span>
+                            </button>
+                        </div>
+                    </nav>
+                `;
+            },
+
+            // Показать словарь
+            showDictionary() {
+                const app = document.getElementById('app');
+                app.innerHTML = `
+                    <header class="header">
+                        <div class="header-content">
+                            <div class="logo-text">📖 Весь словарь</div>
+                            <button onclick="UI.showMainPage()" style="background: none; border: none; color: var(--primary); cursor: pointer; font-size: 18px;">← Назад</button>
+                        </div>
+                    </header>
+
+                    <main class="main-content">
+                        ${Object.values(WORD_TOPICS).map(topic => `
+                            <div class="card fade-in">
+                                <h3>${topic.icon} ${topic.name} <span style="color: var(--text-light); font-size: 14px;">(${topic.words.length} слов)</span></h3>
+                                <div class="test-options">
+                                    ${topic.words.map(word => `
+                                        <div class="result-item correct">
+                                            <div>
+                                                <strong>${word.original}</strong>
+                                                <div style="color: var(--text-light);">${word.translation}</div>
+                                            </div>
+                                            <button class="pronunciation-btn" onclick="Utils.speakWord('${word.original}')" style="margin: 0;">
+                                                🔊
+                                            </button>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </main>
+
+                    <nav class="navigation">
+                        <div class="nav-content">
+                            <button class="nav-item" onclick="UI.showMainPage()">
+                                <span class="nav-icon">🏠</span>
+                                <span>Главная</span>
+                            </button>
+                            <button class="nav-item" onclick="UI.showTopicsPage()">
+                                <span class="nav-icon">📚</span>
+                                <span>Темы</span>
+                            </button>
+                            <button class="nav-item" onclick="UI.showTestSelection()">
+                                <span class="nav-icon">🎯</span>
+                                <span>Тест</span>
+                            </button>
+                            <button class="nav-item active">
+                                <span class="nav-icon">📖</span>
+                                <span>Словарь</span>
+                            </button>
+                        </div>
+                    </nav>
+                `;
+            },
+
+            // Показать выбор теста
+            showTestSelection() {
+                const app = document.getElementById('app');
+                app.innerHTML = `
+                    <header class="header">
+                        <div class="header-content">
+                            <div class="logo-text">🎯 Выбор теста</div>
+                            <button onclick="UI.showMainPage()" style="background: none; border: none; color: var(--primary); cursor: pointer; font-size: 18px;">← Назад</button>
+                        </div>
+                    </header>
+
+                    <main class="main-content">
+                        <div class="card fade-in">
+                            <h2>Выберите тип теста</h2>
+                            <p>Различные форматы тестирования для лучшего запоминания слов</p>
+                            
+                            <div class="grid">
+                                <button class="btn btn-primary" onclick="UI.showTestModeSelection('choice')">
+                                    📝 Выбор из вариантов
+                                </button>
+                                <button class="btn btn-secondary" onclick="UI.showTestModeSelection('writing')">
+                                    ✏️ Письменный перевод
+                                </button>
+                                <button class="btn btn-secondary" onclick="UI.showTestModeSelection('reverse')">
+                                    🔄 Обратный перевод
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="card fade-in">
+                            <h3>🎯 Тесты по темам</h3>
+                            <div class="grid grid-3">
+                                ${Object.values(WORD_TOPICS).map(topic => `
+                                    <button class="btn btn-secondary" onclick="UI.showTopicTestSelection('${topic.id}')">
+                                        ${topic.icon} ${topic.name}
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </main>
+
+                    <nav class="navigation">
+                        <div class="nav-content">
+                            <button class="nav-item" onclick="UI.showMainPage()">
+                                <span class="nav-icon">🏠</span>
+                                <span>Главная</span>
+                            </button>
+                            <button class="nav-item" onclick="UI.showTopicsPage()">
+                                <span class="nav-icon">📚</span>
+                                <span>Темы</span>
+                            </button>
+                            <button class="nav-item active">
+                                <span class="nav-icon">🎯</span>
+                                <span>Тест</span>
+                            </button>
+                            <button class="nav-item" onclick="UI.showDictionary()">
+                                <span class="nav-icon">📖</span>
+                                <span>Словарь</span>
+                            </button>
+                        </div>
+                    </nav>
+                `;
+            },
+
+            // Показать выбор режима теста
+            showTestModeSelection(testType) {
+                AppState.testType = testType;
+                const app = document.getElementById('app');
+                app.innerHTML = `
+                    <header class="header">
+                        <div class="header-content">
+                            <div class="logo-text">📊 Режим теста</div>
+                            <button onclick="UI.showTestSelection()" style="background: none; border: none; color: var(--primary); cursor: pointer; font-size: 18px;">← Назад</button>
+                        </div>
+                    </header>
+
+                    <main class="main-content">
+                        <div class="card fade-in">
+                            <h2>Выберите режим</h2>
+                            <p>${Utils.getTestTypeDescription(testType)}</p>
+                            
+                            <div class="grid">
+                                <button class="btn btn-primary" onclick="TestSystem.startTest('once')">
+                                    📋 Все слова один раз
+                                </button>
+                                <button class="btn btn-secondary" onclick="TestSystem.startTest('untilCorrect')">
+                                    🔁 До правильного ответа
+                                </button>
+                                <button class="btn btn-secondary" onclick="TestSystem.startTest('difficult')">
+                                    🎯 Только сложные слова
+                                </button>
+                            </div>
+                        </div>
+                    </main>
+
+                    <nav class="navigation">
+                        <div class="nav-content">
+                            <button class="nav-item" onclick="UI.showMainPage()">
+                                <span class="nav-icon">🏠</span>
+                                <span>Главная</span>
+                            </button>
+                            <button class="nav-item" onclick="UI.showTopicsPage()">
+                                <span class="nav-icon">📚</span>
+                                <span>Темы</span>
+                            </button>
+                            <button class="nav-item active">
+                                <span class="nav-icon">🎯</span>
+                                <span>Тест</span>
+                            </button>
+                            <button class="nav-item" onclick="UI.showDictionary()">
+                                <span class="nav-icon">📖</span>
+                                <span>Словарь</span>
+                            </button>
+                        </div>
+                    </nav>
+                `;
+            },
+
+            // Показать выбор теста для конкретной темы
+            showTopicTestSelection(topicId) {
+                const topic = WORD_TOPICS[topicId];
+                AppState.currentTopic = topicId;
+                
+                const app = document.getElementById('app');
+                app.innerHTML = `
+                    <header class="header">
+                        <div class="header-content">
+                            <div class="logo-text">${topic.icon} Тест: ${topic.name}</div>
+                            <button onclick="UI.showTopicWords('${topicId}')" style="background: none; border: none; color: var(--primary); cursor: pointer; font-size: 18px;">← Назад</button>
+                        </div>
+                    </header>
+
+                    <main class="main-content">
+                        <div class="card fade-in">
+                            <h2>Выберите тип теста</h2>
+                            <p>Тестирование по теме "${topic.name}"</p>
+                            
+                            <div class="grid">
+                                <button class="btn btn-primary" onclick="UI.showTopicTestModeSelection('${topicId}', 'choice')">
+                                    📝 Выбор из вариантов
+                                </button>
+                                <button class="btn btn-secondary" onclick="UI.showTopicTestModeSelection('${topicId}', 'writing')">
+                                    ✏️ Письменный перевод
+                                </button>
+                                <button class="btn btn-secondary" onclick="UI.showTopicTestModeSelection('${topicId}', 'reverse')">
+                                    🔄 Обратный перевод
+                                </button>
+                            </div>
+                        </div>
+                    </main>
+
+                    <nav class="navigation">
+                        <div class="nav-content">
+                            <button class="nav-item" onclick="UI.showMainPage()">
+                                <span class="nav-icon">🏠</span>
+                                <span>Главная</span>
+                            </button>
+                            <button class="nav-item active">
+                                <span class="nav-icon">📚</span>
+                                <span>Темы</span>
+                            </button>
+                            <button class="nav-item active">
+                                <span class="nav-icon">🎯</span>
+                                <span>Тест</span>
+                            </button>
+                            <button class="nav-item" onclick="UI.showDictionary()">
+                                <span class="nav-icon">📖</span>
+                                <span>Словарь</span>
+                            </button>
+                        </div>
+                    </nav>
+                `;
+            },
+
+            // Показать выбор режима теста для темы
+            showTopicTestModeSelection(topicId, testType) {
+                const topic = WORD_TOPICS[topicId];
+                AppState.currentTopic = topicId;
+                AppState.testType = testType;
+                
+                const app = document.getElementById('app');
+                app.innerHTML = `
+                    <header class="header">
+                        <div class="header-content">
+                            <div class="logo-text">${topic.icon} ${topic.name}</div>
+                            <button onclick="UI.showTopicTestSelection('${topicId}')" style="background: none; border: none; color: var(--primary); cursor: pointer; font-size: 18px;">← Назад</button>
+                        </div>
+                    </header>
+
+                    <main class="main-content">
+                        <div class="card fade-in">
+                            <h2>Выберите режим</h2>
+                            <p>${Utils.getTestTypeDescription(testType)} по теме "${topic.name}"</p>
+                            
+                            <div class="grid">
+                                <button class="btn btn-primary" onclick="TestSystem.startTest('once', '${topicId}')">
+                                    📋 Все слова один раз
+                                </button>
+                                <button class="btn btn-secondary" onclick="TestSystem.startTest('untilCorrect', '${topicId}')">
+                                    🔁 До правильного ответа
+                                </button>
+                            </div>
+                        </div>
+                    </main>
+
+                    <nav class="navigation">
+                        <div class="nav-content">
+                            <button class="nav-item" onclick="UI.showMainPage()">
+                                <span class="nav-icon">🏠</span>
+                                <span>Главная</span>
+                            </button>
+                            <button class="nav-item active">
+                                <span class="nav-icon">📚</span>
+                                <span>Темы</span>
+                            </button>
+                            <button class="nav-item active">
+                                <span class="nav-icon">🎯</span>
+                                <span>Тест</span>
+                            </button>
+                            <button class="nav-item" onclick="UI.showDictionary()">
+                                <span class="nav-icon">📖</span>
+                                <span>Словарь</span>
+                            </button>
+                        </div>
+                    </nav>
+                `;
+            },
+
+            // Функция переворота карточки
+            flipCard(card) {
+                if (AppState.settings.animationsEnabled) {
+                    card.classList.toggle('flipped');
+                } else {
+                    const front = card.querySelector('.flip-card-front');
+                    const back = card.querySelector('.flip-card-back');
+                    
+                    if (front.style.display !== 'none') {
+                        front.style.display = 'none';
+                        back.style.display = 'flex';
+                    } else {
+                        front.style.display = 'flex';
+                        back.style.display = 'none';
+                    }
+                }
+            }
+        };
+
+        // ==================== ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ ====================
+        function initApp() {
+            console.log(`🚀 Инициализация ${APP_CONFIG.name} v${APP_CONFIG.version}`);
+            
+            // Загрузка данных
+            AppState.userProgress = ProgressManager.loadProgress();
+            AppState.settings = SettingsManager.loadSettings();
+            
+            // Инициализация Telegram Web App (если доступно)
+            if (typeof Telegram !== 'undefined' && Telegram.WebApp) {
+                Telegram.WebApp.ready();
+                Telegram.WebApp.expand();
+                
+                // Получение данных пользователя из Telegram
+                const user = Telegram.WebApp.initDataUnsafe?.user;
+                if (user) {
+                    AppState.user.name = user.first_name || 'Пользователь';
+                    if (user.username) {
+                        AppState.user.name = `@${user.username}`;
+                    }
+                }
+            }
+            
+            // Показ главного интерфейса
+            setTimeout(() => {
+                console.log('✅ Приложение готово!');
+                UI.showMainPage();
+            }, 1500);
+        }
+
+        // ==================== ЗАПУСК ПРИЛОЖЕНИЯ ====================
+        // Запуск когда DOM готов
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initApp);
+        } else {
+            initApp();
+        }
+
+        // ==================== ГЛОБАЛЬНЫЕ ФУНКЦИИ ====================
+        // Делаем основные функции глобальными для использования в HTML
+        window.UI = UI;
+        window.TestSystem = TestSystem;
+        window.Utils = Utils;
+        window.SettingsManager = SettingsManager;
+    </script>
+</body>
+</html>
