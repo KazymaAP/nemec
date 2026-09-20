@@ -1,1359 +1,676 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vocab Master - Немецкий | Еда и кухня</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #0a0a0a;
-            color: white;
-            overflow-x: hidden;
-        }
-        
-        #app {
-            min-height: 100vh;
-            background: #0a0a0a;
-        }
-        
-        /* Loading */
-        .loading {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background: #0a0a0a;
-        }
-        
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid #333;
-            border-top: 4px solid #00d4ff;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* Header */
-        .header {
-            background: #1a1a1a;
-            border-bottom: 1px solid #333;
-            padding: 16px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        .logo-text {
-            font-size: 20px;
-            font-weight: bold;
-            background: linear-gradient(135deg, #00d4ff, #0099cc);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        /* Main Content */
-        .main-content {
-            padding: 20px;
-            max-width: 800px;
-            margin: 0 auto;
-            padding-bottom: 80px;
-        }
-        
-        .card {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid #333;
-            border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 16px;
-            backdrop-filter: blur(10px);
-        }
-        
-        h1 {
-            background: linear-gradient(135deg, #00d4ff, #0099cc);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-size: 24px;
-            margin-bottom: 16px;
-        }
-        
-        h2 {
-            color: white;
-            font-size: 20px;
-            margin-bottom: 16px;
-        }
-        
-        h3 {
-            color: white;
-            font-size: 18px;
-            margin-bottom: 12px;
-        }
-        
-        p {
-            color: #b0b0b0;
-            line-height: 1.6;
-            margin-bottom: 16px;
-        }
-        
-        /* Buttons */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            width: 100%;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #00d4ff, #0099cc);
-            color: white;
-        }
-        
-        .btn-secondary {
-            background: #2a2a2a;
-            color: white;
-            border: 1px solid #333;
-        }
-        
-        .btn-success {
-            background: #00ff88;
-            color: white;
-        }
-        
-        .btn-danger {
-            background: #ff4444;
-            color: white;
-        }
-        
-        .btn:hover {
-            transform: translateY(-2px);
-        }
-        
-        /* Grid */
-        .grid {
-            display: grid;
-            gap: 12px;
-            margin-top: 20px;
-        }
-        
-        .grid-2 {
-            grid-template-columns: 1fr 1fr;
-        }
-        
-        .grid-3 {
-            grid-template-columns: 1fr 1fr 1fr;
-        }
-        
-        /* Stats */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 12px;
-            margin-top: 16px;
-        }
-        
-        .stat {
-            text-align: center;
-        }
-        
-        .stat-value {
-            font-size: 20px;
-            font-weight: bold;
-            color: #00d4ff;
-        }
-        
-        .stat-label {
-            font-size: 12px;
-            color: #666;
-        }
-        
-        /* Navigation */
-        .navigation {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #1a1a1a;
-            border-top: 1px solid #333;
-            padding: 8px;
-            z-index: 100;
-        }
-        
-        .nav-content {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            padding: 8px;
-            background: none;
-            border: none;
-            color: #b0b0b0;
-            cursor: pointer;
-            font-size: 12px;
-            transition: color 0.3s ease;
-        }
-        
-        .nav-item.active {
-            color: #00d4ff;
-        }
-        
-        .nav-icon {
-            font-size: 20px;
-        }
-        
-        /* Test Styles */
-        .test-word {
-            text-align: center;
-            padding: 30px;
-            background: rgba(255,255,255,0.02);
-            border-radius: 12px;
-            margin-bottom: 20px;
-        }
-        
-        .test-options {
-            display: grid;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        
-        .option-btn {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            background: #2a2a2a;
-            border: 1px solid #333;
-            border-radius: 8px;
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .option-btn:hover {
-            background: #333;
-        }
-        
-        .option-btn.correct {
-            background: rgba(0, 255, 136, 0.2);
-            border-color: #00ff88;
-        }
-        
-        .option-btn.incorrect {
-            background: rgba(255, 68, 68, 0.2);
-            border-color: #ff4444;
-        }
-        
-        .option-status {
-            font-size: 18px;
-        }
-        
-        .test-input {
-            width: 100%;
-            padding: 15px;
-            background: #2a2a2a;
-            border: 1px solid #333;
-            border-radius: 8px;
-            color: white;
-            font-size: 16px;
-            margin-bottom: 20px;
-        }
-        
-        .test-input.correct {
-            border-color: #00ff88;
-            background: rgba(0, 255, 136, 0.1);
-        }
-        
-        .test-input.incorrect {
-            border-color: #ff4444;
-            background: rgba(255, 68, 68, 0.1);
-        }
-        
-        .test-result {
-            text-align: center;
-            padding: 20px;
-        }
-        
-        .result-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            margin-bottom: 8px;
-            background: #2a2a2a;
-            border-radius: 6px;
-        }
-        
-        .result-item.correct {
-            border-left: 4px solid #00ff88;
-        }
-        
-        .result-item.incorrect {
-            border-left: 4px solid #ff4444;
-        }
-        
-        .progress-bar {
-            width: 100%;
-            height: 6px;
-            background: #333;
-            border-radius: 3px;
-            overflow: hidden;
-            margin: 10px 0;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #00d4ff, #0099cc);
-            transition: width 0.3s ease;
-        }
-        
-        /* Learning */
-        .word-card {
-            text-align: center;
-            padding: 30px;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-        
-        .word-card:hover {
-            transform: translateY(-2px);
-        }
-        
-        .word-original {
-            font-size: 32px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #00d4ff;
-        }
-        
-        .word-translation {
-            font-size: 18px;
-            color: #b0b0b0;
-        }
-        
-        .hidden {
-            display: none;
-        }
-        
-        /* Topic Cards */
-        .topic-card {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid #333;
-            border-radius: 12px;
-            padding: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
-        }
-        
-        .topic-card:hover {
-            transform: translateY(-2px);
-            border-color: #00d4ff;
-        }
-        
-        .topic-icon {
-            font-size: 32px;
-            margin-bottom: 10px;
-        }
-        
-        .topic-name {
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: white;
-        }
-        
-        .topic-count {
-            font-size: 12px;
-            color: #666;
-        }
-        
-        /* Media Queries for Mobile */
-        @media (max-width: 768px) {
-            .main-content {
-                padding: 15px;
-                padding-bottom: 80px;
-            }
-            
-            .card {
-                padding: 16px;
-            }
-            
-            .grid-2, .grid-3 {
-                grid-template-columns: 1fr;
-            }
-            
-            .stats-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-            
-            .word-original {
-                font-size: 24px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .header-content {
-                padding: 0 10px;
-            }
-            
-            .main-content {
-                padding: 10px;
-                padding-bottom: 80px;
-            }
-            
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .nav-item {
-                font-size: 10px;
-                padding: 6px;
-            }
-            
-            .nav-icon {
-                font-size: 18px;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>nemec — Немецкий со вкусом</title>
+<meta name="theme-color" content="#151614">
+<meta name="description" content="Немецкий для обычной жизни: еда, кухня и продукты. Карточки, словарь и три формата тестирования.">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+body{font-family:Arial,sans-serif;background:#f2f2f2;color:#222;margin:0;padding:0}
+.header{background:#fff;border-bottom:1px solid #ccc;padding:12px 16px;position:sticky;top:0;z-index:10}
+.header-content{max-width:700px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
+.logo-text{font-size:18px;font-weight:bold}
+.main-content{max-width:700px;margin:0 auto;padding:16px;padding-bottom:80px}
+.card{background:#fff;border:1px solid #ccc;border-radius:4px;padding:16px;margin-bottom:12px}
+h1{font-size:22px;margin:0 0 8px}h2{font-size:18px;margin:0 0 8px}h3{font-size:16px;margin:0 0 8px}
+p{color:#555;margin:0 0 12px}
+.btn{display:block;width:100%;padding:12px;border:1px solid #ccc;border-radius:4px;background:#fff;color:#222;font-size:16px;cursor:pointer;margin-bottom:8px;text-align:center}
+.btn-primary{background:#0056b3;color:#fff;border-color:#0056b3}
+.btn-secondary{background:#fff;color:#222}
+.grid{display:grid;gap:8px;margin-top:8px}.grid-2{grid-template-columns:1fr 1fr}
+.topic-card{background:#fff;border:1px solid #ccc;border-radius:4px;padding:16px;cursor:pointer;text-align:center}
+.topic-name{font-weight:bold;margin-bottom:4px}.topic-count{font-size:12px;color:#666}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center;margin-top:8px}
+.stat-value{font-size:20px;font-weight:bold}.stat-label{font-size:12px;color:#666}
+.navigation{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #ccc;display:flex;justify-content:space-around;padding:8px 0;z-index:10}
+.nav-item{background:none;border:none;color:#555;font-size:12px;cursor:pointer;padding:4px 8px}
+.nav-item.active{color:#0056b3;font-weight:bold}
+.test-word{text-align:center;padding:24px 0;margin-bottom:16px}
+.test-word h1{font-size:32px;margin:0 0 8px}
+.test-options{display:grid;gap:8px}
+.option-btn{display:block;width:100%;padding:14px;background:#fff;border:1px solid #ccc;border-radius:4px;text-align:left;font-size:16px;cursor:pointer}
+.option-btn.correct{background:#d4edda;border-color:#28a745}
+.option-btn.incorrect{background:#f8d7da;border-color:#dc3545}
+.test-input{width:100%;padding:12px;border:1px solid #ccc;border-radius:4px;font-size:16px;margin-bottom:12px;box-sizing:border-box}
+.test-input.correct{border-color:#28a745;background:#d4edda}
+.test-input.incorrect{border-color:#dc3545;background:#f8d7da}
+.result-item{display:flex;justify-content:space-between;align-items:center;padding:12px;border:1px solid #ccc;border-radius:4px;margin-bottom:8px;background:#fff}
+.result-item.correct{border-left:4px solid #28a745}.result-item.incorrect{border-left:4px solid #dc3545}
+.progress-bar{height:6px;background:#ddd;border-radius:3px;overflow:hidden;margin:16px 0}
+.progress-fill{height:100%;background:#0056b3;transition:width .2s}
+.word-card{padding:20px;text-align:center;cursor:pointer}
+.word-original{font-size:24px;font-weight:bold;margin-bottom:8px}
+.word-translation{font-size:18px;color:#0056b3}
+.hidden{display:none}
+@media(max-width:480px){.grid-2{grid-template-columns:1fr}.main-content{padding:12px;padding-bottom:80px}}
+
+/* ==================== nemec — warm graphite / editorial ==================== */
+:root{color-scheme:dark;--bg:#151614;--surface:#1c1e1b;--surface-hover:#252722;--line:#32352e;--line-soft:#282a24;--ink:#efeee8;--muted:#a0a399;--muted-2:#7c7f74;--accent:#e5a078;--accent-soft:#c9885f;--green:#a9c39a;--red:#e99c91;--radius:18px}
+*{box-sizing:border-box}
+html{min-height:100%;scroll-padding-top:94px}
+body{margin:0;background:radial-gradient(ellipse 80% 50% at 15% -10%,rgba(229,160,120,.07),transparent 60%),radial-gradient(ellipse 70% 50% at 90% 110%,rgba(169,195,154,.045),transparent 60%),var(--bg);background-attachment:fixed;color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button,input,a{-webkit-tap-highlight-color:transparent}
+button,input{font:inherit}
+button,a,[role=button]{touch-action:manipulation}
+button{color:inherit}
+button:focus-visible,a:focus-visible,input:focus-visible,[role=button]:focus-visible{outline:2px solid var(--accent);outline-offset:5px}
+button{transition:background .18s,border-color .18s,transform .18s,box-shadow .18s}
+button:active{transform:translateY(1px)}
+a{color:inherit}
+::selection{background:#79523b;color:#fff}
+.header{background:rgba(21,22,20,.96);border-bottom:1px solid var(--line);padding:0 28px;backdrop-filter:blur(18px)}
+.header-content{max-width:960px;min-height:82px;gap:16px}
+.logo-text{font-size:17px;font-weight:550;letter-spacing:-.4px}
+.header-content>button{color:var(--muted)!important;font-size:13px;min-height:44px;padding:0 4px}
+.header-content>div:last-child:not(.logo-text):not(.brand){font-variant-numeric:tabular-nums}
+.main-content{max-width:1016px;padding:42px 28px 130px;margin:auto}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:28px;margin-bottom:20px;box-shadow:0 1px 0 rgba(255,255,255,.02) inset,0 20px 40px -30px rgba(0,0,0,.6)}
+h1,h2,h3{color:var(--ink);font-weight:550;letter-spacing:-.6px;line-height:1.25}
+h1{font-size:30px;margin:0 0 14px}h2{font-size:25px;margin:0 0 24px}h3{font-size:18px;margin:0 0 20px}
+p{color:var(--muted);line-height:1.65;margin:0 0 22px}
+.btn,.option-btn{width:100%;padding:17px 20px;min-height:56px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font-size:14px;line-height:1.45;font-weight:500;cursor:pointer;margin-bottom:0}
+.btn-primary{background:var(--accent);color:#262016;border-color:var(--accent);font-weight:650}
+.btn-primary:hover{background:#efb18c;color:#262016;border-color:#efb18c}
+.btn-secondary{background:#20221e;color:var(--ink)}
+.btn+.btn{margin-top:10px}.grid>.btn+.btn{margin-top:0}
+.btn:hover,.option-btn:hover{background:var(--surface-hover);border-color:#5b5e54}
+.grid{gap:12px;margin-top:16px}.grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.topic-card{position:relative;background:#20221e;border:1px solid var(--line);border-radius:14px;padding:26px;text-align:left;transition:background .18s,border-color .18s,transform .18s;min-height:128px}
+.topic-card:after{content:'↗';position:absolute;right:20px;top:20px;color:var(--muted);font-size:20px;transition:color .18s,transform .18s}
+.topic-card:hover{background:var(--surface-hover);border-color:#686253;transform:translateY(-1px)}
+.topic-card:hover:after{color:var(--accent);transform:translate(2px,-2px)}
+.topic-name{font-weight:500;font-size:18px;padding-right:24px;margin-bottom:12px;letter-spacing:-.3px}
+.topic-count{color:var(--muted);font-size:13px}
+.stats-grid{gap:0;margin:0;text-align:left}
+.stats-grid>div{padding:0 24px;border-right:1px solid var(--line)}
+.stats-grid>div:first-child{padding-left:0}.stats-grid>div:last-child{border:0}
+.stat-value{font-size:30px;line-height:1.2;font-weight:450;font-variant-numeric:tabular-nums;letter-spacing:-1px;margin-bottom:7px}
+.stat-label{color:var(--muted);font-size:12px}
+.navigation{left:50%;right:auto;transform:translateX(-50%);bottom:20px;width:min(440px,calc(100% - 40px));background:rgba(34,36,31,.97);border:1px solid #3a3d34;border-radius:20px;box-shadow:0 8px 35px #0005;backdrop-filter:blur(20px);padding:7px;gap:4px;z-index:20}
+.nav-item{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:9px 4px;min-height:58px;font-size:10px;line-height:1.2;font-weight:500;color:var(--muted);border-radius:13px}
+.nav-item:before{content:'';display:block;width:20px;height:20px;background:currentColor;mask:center/contain no-repeat var(--nav-icon);-webkit-mask:center/contain no-repeat var(--nav-icon)}
+.nav-item:nth-child(1){--nav-icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.5' stroke-linejoin='round'%3E%3Cpath d='m3 10 9-7 9 7v10H15v-7H9v7H3z'/%3E%3C/svg%3E")}
+.nav-item:nth-child(2){--nav-icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.5'%3E%3Crect x='3' y='3' width='7' height='7' rx='1.5'/%3E%3Crect x='14' y='3' width='7' height='7' rx='1.5'/%3E%3Crect x='3' y='14' width='7' height='7' rx='1.5'/%3E%3Crect x='14' y='14' width='7' height='7' rx='1.5'/%3E%3C/svg%3E")}
+.nav-item:nth-child(3){--nav-icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 3h6M9 3v6L4 18q-1 3 2 3h12q3 0 2-3l-5-9V3M7 15h10'/%3E%3C/svg%3E")}
+.nav-item:nth-child(4){--nav-icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.5' stroke-linejoin='round'%3E%3Cpath d='M12 5Q6 2 3 4v15q4-2 9 1 5-3 9-1V4q-4-2-9 1v15'/%3E%3C/svg%3E")}
+.nav-item.active{color:var(--accent);background:#35362e;font-weight:500}
+.nav-item:hover{color:var(--ink);background:#30332b}
+.test-word{padding:60px 24px 42px;margin-bottom:28px;border:1px solid var(--line);border-radius:20px;background:var(--surface)}
+.test-word:before{content:'DEUTSCH · PRAXIS';display:block;color:var(--accent);font-size:10px;letter-spacing:2px;margin-bottom:28px}
+.test-word h1{font-family:Georgia,"Times New Roman",serif;font-size:clamp(32px,5vw,52px);font-weight:400;overflow-wrap:anywhere;line-height:1.2;margin-bottom:18px}
+.test-word p{font-size:13px;margin-bottom:0}
+.test-options{gap:12px;counter-reset:option}
+.option-btn{position:relative;padding-left:61px;text-align:left;min-height:64px;counter-increment:option}
+.option-btn:before{content:counter(option,decimal-leading-zero);position:absolute;left:21px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+.option-btn.correct,.test-input.correct{background:#263529;border-color:#698760;color:#d2e6c8}
+.option-btn.incorrect,.test-input.incorrect{background:#3a2826;border-color:#a8675e;color:#f3c3bb}
+.test-input{padding:19px 20px;min-height:60px;color:var(--ink);background:var(--surface);border:1px solid #55594c;border-radius:12px;font-size:16px;margin-bottom:18px;box-shadow:none}
+.test-input::placeholder{color:var(--muted)}
+#next-btn{margin-top:20px}
+.progress-bar{height:3px;border-radius:4px;background:#35372f;margin:28px 0}
+.progress-fill{background:var(--accent);border-radius:4px}
+.result-item{background:transparent;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:17px 0;margin:0;gap:18px;overflow-wrap:anywhere}
+.result-item:last-child{border-bottom:0}.result-item strong{font-weight:500}
+.result-item.correct{border-left:2px solid var(--green);padding-left:16px}
+.result-item.incorrect{border-left:2px solid var(--red);padding-left:16px}
+[style*="color:#666"]{color:var(--muted)!important;font-size:13px;line-height:1.6;margin-top:5px}
+[style*="color:#0056b3"]{color:var(--accent)!important}
+[style*="color:#28a745"]{color:var(--green)!important}
+[style*="color:#dc3545"]{color:var(--red)!important}
+.word-card{position:relative;padding:30px 42px 30px 22px;text-align:left;background:#22241f;border-radius:13px;margin:0;transition:background .18s,border-color .18s}
+.word-card:after{content:'+';position:absolute;right:22px;top:29px;color:var(--accent);font-size:21px;font-weight:300;transition:transform .18s}
+.word-card:has(.word-translation:not(.hidden)):after{content:'−'}
+.word-card:hover{border-color:#686253;background:#282a24}
+.word-original{font-family:Georgia,"Times New Roman",serif;font-size:26px;font-weight:400;line-height:1.35;overflow-wrap:anywhere;margin-bottom:0}
+.word-translation{color:var(--accent);font-size:15px;margin-top:13px}
+.test-result{text-align:center;padding:28px 0 10px}
+.test-result [style*="font-size:48px"]{font-family:Georgia,serif;font-size:76px!important;font-weight:400!important}
+.hidden{display:none!important}
+
+/* ==================== HOME ==================== */
+.home-content{padding-top:26px}
+.home-topline{display:flex;align-items:center;gap:14px;margin-bottom:26px;color:var(--muted);font-size:10px;letter-spacing:2.2px;text-transform:uppercase;font-weight:550}
+.home-topline .dot{width:5px;height:5px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px rgba(229,160,120,.7)}
+.home-topline .rule{flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent 90%)}
+
+.home-stats{position:relative;margin-bottom:34px;padding:26px 28px;border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg,rgba(229,160,120,.035),transparent 60%),var(--surface);overflow:hidden}
+.home-stats:before{content:'';position:absolute;top:0;left:28px;right:28px;height:1px;background:linear-gradient(90deg,transparent,rgba(229,160,120,.4),transparent)}
+.home-stats .stats-grid{grid-template-columns:repeat(3,1fr)}
+.home-stats .stats-grid>div{border-right:1px solid var(--line);padding:0 24px}
+.home-stats .stats-grid>div:first-child{padding-left:0}
+.home-stats .stats-grid>div:last-child{border-right:0}
+.home-stats .stat-value{display:flex;gap:8px;align-items:baseline}
+.home-stats .stat-value small{font-size:12px;font-weight:400;letter-spacing:0;color:var(--muted)}
+
+/* NEW: mastery row */
+.mastery-row{margin-top:24px;padding-top:22px;border-top:1px solid var(--line-soft)}
+.mastery-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:11px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600}
+.mastery-head span:last-child{color:var(--accent);font-weight:600;letter-spacing:0;font-variant-numeric:tabular-nums;font-size:12px}
+.mastery-bar{height:3px;background:var(--line-soft);border-radius:3px;overflow:hidden}
+.mastery-fill{height:100%;background:linear-gradient(90deg,var(--accent-soft),var(--accent));border-radius:3px;transition:width .5s ease}
+.mastery-note{margin-top:10px;font-size:11px;color:var(--muted-2);letter-spacing:.2px}
+
+.section-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 18px}
+.section-heading h2{display:flex;align-items:center;gap:12px;font-size:19px;margin:0;letter-spacing:-.5px}
+.section-heading h2:before{content:'';width:18px;height:1px;background:var(--accent);flex:none;opacity:.85}
+.section-heading>span{font-size:11px;color:var(--muted);letter-spacing:.4px}
+
+.practice-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:36px}
+.practice-card{position:relative;display:grid;grid-template-columns:48px 1fr 20px;gap:18px;align-items:center;text-align:left;padding:24px;background:var(--surface);border:1px solid var(--line);border-radius:16px;cursor:pointer;transition:background .18s,border-color .18s,transform .18s,box-shadow .18s;font:inherit;color:inherit;width:100%}
+.practice-card:hover{background:#252720;border-color:#5c604f;transform:translateY(-1px);box-shadow:0 18px 30px -22px rgba(0,0,0,.7)}
+.practice-icon{display:grid;place-items:center;width:48px;height:50px;background:linear-gradient(180deg,#2b2e26,#232520);color:var(--accent);border:1px solid #363930;border-radius:13px}
+.practice-icon svg{width:23px;height:23px}
+.practice-title{display:block;font-size:15px;font-weight:500;letter-spacing:-.2px;margin-bottom:4px}
+.practice-description{display:block;font-size:11px;color:var(--muted);font-weight:400}
+.practice-arrow{font-size:19px;color:var(--muted);transition:color .18s,transform .18s}
+.practice-card:hover .practice-arrow{color:var(--accent);transform:translate(2px,-2px)}
+
+.collection-list{border-top:1px solid var(--line);margin-bottom:8px}
+.collection-row{display:flex;width:100%;align-items:center;gap:16px;text-align:left;padding:17px 6px;background:transparent;border:0;border-bottom:1px solid var(--line);cursor:pointer;transition:background .18s,padding .18s;font:inherit;color:inherit}
+.collection-row:hover{background:var(--surface);padding-left:14px;padding-right:0}
+.collection-icon{flex:none;display:grid;place-items:center;width:42px;height:42px;background:#22241f;border:1px solid var(--line-soft);border-radius:11px;color:var(--accent)}
+.collection-icon svg{width:19px;height:19px}
+.collection-body{flex:1;display:flex;flex-direction:column;gap:7px;min-width:0}
+.collection-label{font-size:14.5px;font-weight:450;letter-spacing:-.2px;color:var(--ink)}
+/* NEW: mastery dots */
+.collection-dots{display:inline-flex;gap:4px}
+.collection-dots .dot{width:6px;height:6px;border-radius:50%;background:var(--line);transition:background .2s}
+.collection-dots .dot.filled{background:var(--accent);box-shadow:0 0 8px rgba(229,160,120,.35)}
+.collection-count{font-size:11px;color:var(--muted);padding:4px 10px;border:1px solid var(--line);border-radius:99px;white-space:nowrap}
+.collection-row>svg.arrow{width:16px;height:16px;margin-left:4px;color:var(--muted);transition:transform .18s,color .18s;flex:none}
+.collection-row:hover>svg.arrow{color:var(--accent);transform:translateX(3px)}
+.recent-results{margin-top:34px}
+
+/* NEW: dictionary search */
+.dict-search-wrap{position:sticky;top:82px;z-index:5;background:linear-gradient(180deg,var(--bg) 80%,transparent);padding:6px 0 16px;margin-bottom:4px}
+.dict-search{position:relative}
+.dict-search input{width:100%;padding:15px 18px 15px 46px;background:var(--surface);border:1px solid var(--line);border-radius:14px;color:var(--ink);font-size:14px;transition:border-color .18s,background .18s;box-shadow:0 8px 24px -18px rgba(0,0,0,.7)}
+.dict-search input::placeholder{color:var(--muted-2)}
+.dict-search input:focus{outline:none;border-color:var(--accent-soft);background:#22241f}
+.dict-search svg{position:absolute;left:17px;top:50%;transform:translateY(-50%);width:17px;height:17px;color:var(--muted-2);pointer-events:none}
+.dict-empty{display:none;padding:40px 20px;text-align:center;color:var(--muted);font-size:13px}
+.dict-empty.show{display:block}
+.dict-section-title{font-family:Georgia,"Times New Roman",serif;font-size:19px;font-weight:400;color:var(--ink);margin:0 0 16px;letter-spacing:-.4px;display:flex;align-items:baseline;gap:10px}
+.dict-section-title small{font-size:11px;letter-spacing:1.4px;color:var(--muted-2);text-transform:uppercase;font-family:Inter,sans-serif;font-weight:500}
+.dict-word{display:flex;justify-content:space-between;align-items:baseline;gap:18px;padding:13px 0;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
+.dict-word:last-child{border-bottom:0}
+.dict-word strong{font-weight:500;font-size:15px;color:var(--ink);flex:none}
+.dict-word span{color:var(--muted);font-size:13.5px;text-align:right}
+.dict-word mark{background:transparent;color:var(--accent);font-weight:600}
+
+@media(min-width:800px){.main-content:not(.home-content){max-width:780px;padding-top:38px}}
+@media(max-width:600px){
+  .header{padding:0 22px}.header-content{min-height:72px}
+  .main-content{padding:25px 20px 124px}.home-content{padding-top:18px}
+  .home-topline{font-size:9px;letter-spacing:1.6px;margin-bottom:20px;gap:10px}
+  .home-stats{padding:20px 18px;margin-bottom:26px}
+  .home-stats .stats-grid>div{padding:0 14px}
+  .stat-value{font-size:24px}.stat-label{font-size:11px}
+  .home-stats .stat-value small{font-size:10px}
+  .mastery-head{font-size:9px;letter-spacing:1.6px}.mastery-head span:last-child{font-size:11px}
+  .mastery-note{font-size:10px}
+  .section-heading h2{font-size:17px;gap:10px}
+  .section-heading h2:before{width:14px}
+  .section-heading>span{font-size:10px}
+  .practice-grid{gap:11px;margin-bottom:28px}
+  .practice-card{display:block;padding:18px;min-height:158px;border-radius:15px}
+  .practice-icon{width:38px;height:40px;border-radius:11px;margin-bottom:16px}
+  .practice-icon svg{width:20px;height:20px}
+  .practice-title{font-size:14px}.practice-description{font-size:10px}
+  .practice-arrow{position:absolute;right:18px;top:18px}
+  .collection-row{padding:16px 2px;gap:13px}
+  .collection-icon{width:38px;height:38px;border-radius:10px}
+  .collection-icon svg{width:17px;height:17px}
+  .collection-label{font-size:13.5px}
+  .collection-count{font-size:10px;padding:3px 9px}
+  .card{padding:22px 19px;border-radius:16px;margin-bottom:16px}
+  h2{font-size:23px;margin-bottom:20px}
+  .grid-2{grid-template-columns:1fr 1fr}
+  .topic-card{padding:21px 17px;min-height:122px}
+  .topic-name{font-size:16px}.topic-count{font-size:12px}
+  .topic-card:after{right:14px;top:16px;font-size:17px}
+  .test-word{padding:40px 19px 34px}.test-word h1{font-size:36px}
+  .word-card{padding:26px 36px 26px 18px;margin:0}.word-original{font-size:24px}
+  .word-card:after{right:16px;top:24px}
+  .navigation{bottom:max(14px,env(safe-area-inset-bottom));width:calc(100% - 32px);max-width:410px}
+  .logo-text{font-size:15px;max-width:75%;line-height:1.3}
+  .btn{padding:15px;font-size:13px}
+  .header-content>button{flex-shrink:0;font-size:12px}
+  .result-item{padding:15px 0}
+  .dict-search-wrap{top:72px}
+  .dict-section-title{font-size:17px}
+  .dict-word strong{font-size:14px}
+  .dict-word span{font-size:12.5px}
+}
+@media(max-width:355px){
+  .main-content{padding-left:15px;padding-right:15px}
+  .grid-2{grid-template-columns:1fr}
+  .practice-card{padding:14px}.practice-description{font-size:9px}
+  .header{padding:0 17px}
+}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;scroll-behavior:auto!important}}
+</style>
 </head>
 <body>
-    <div id="app">
-        <div class="loading">
-            <div class="spinner"></div>
-            <h2 style="margin-top: 20px; color: #00d4ff;">Vocab Master</h2>
-            <p style="color: #666; margin-top: 10px;">Загрузка...</p>
+<div id="app"></div>
+<script>
+const wordTopics={
+  food:{id:'food',name:'Еда и кухня',words:[
+    {id:1,original:'die Milch',translation:'молоко'},{id:2,original:'Vollmilch',translation:'цельное молоко'},
+    {id:3,original:'die Milch aufkochen',translation:'вскипятить молоко'},{id:4,original:'der Zucker',translation:'сахар'},
+    {id:5,original:'das Geschirr',translation:'посуда'},{id:6,original:'der Teller',translation:'тарелка'},
+    {id:7,original:'die Tasse',translation:'чашка'},{id:8,original:'das Glas',translation:'стакан, рюмка, бокал'},
+    {id:9,original:'der Löffel',translation:'ложка'},{id:10,original:'die Gabel',translation:'вилка'},
+    {id:11,original:'das Messer',translation:'нож'},{id:12,original:'die Vorspeise',translation:'закуска'},
+    {id:13,original:'die Suppe',translation:'суп; первое блюдо'},{id:14,original:'die Kohlsuppe',translation:'щи'},
+    {id:15,original:'die Fischsuppe',translation:'уха'},{id:16,original:'das Gericht',translation:'блюдо (еда)'},
+    {id:17,original:'das Hauptgericht',translation:'основное (второе) блюдо'},{id:18,original:'die Nachspeise',translation:'десерт'},
+    {id:19,original:'das Fleisch',translation:'мясо'},{id:20,original:'das Fleischgericht',translation:'мясное блюдо'},
+    {id:21,original:'das Schweinekotelett',translation:'свиная отбивная'},{id:22,original:'das Steak',translation:'антрекот, стейк'},
+    {id:23,original:'der Fisch',translation:'рыба'},{id:24,original:'die Kartoffel',translation:'картофель'},
+    {id:25,original:'die Salzkartoffeln',translation:'вареный картофель'},{id:26,original:'die Bratkartoffeln',translation:'жареный картофель'},
+    {id:27,original:'das Kartoffelpüree',translation:'картофельное пюре'},{id:28,original:'die Pommes frites',translation:'картофель фри'},
+    {id:29,original:'die Soße',translation:'соус'},{id:30,original:'das Eis',translation:'мороженое'},
+    {id:31,original:'das Schokoladeneis',translation:'шоколадное мороженое'},{id:32,original:'das Obst',translation:'фрукты'},
+    {id:33,original:'das Gemüse',translation:'овощи'},{id:34,original:'der Salat',translation:'салат'},
+    {id:35,original:'der Fleischsalat',translation:'мясной салат'},{id:36,original:'der Obstsalat',translation:'фруктовый салат'}]},
+  products:{id:'products',name:'Продукты',subcategories:{
+    vegetables:{id:'vegetables',name:'Овощи',words:[
+      {id:101,original:'die Kartoffel',translation:'картофель'},{id:102,original:'die Karotte',translation:'морковь-каротель'},
+      {id:103,original:'die Möhre',translation:'морковь'},{id:104,original:'die Mohrrübe',translation:'морковь'},
+      {id:105,original:'die Rübe',translation:'репа'},{id:106,original:'die rote Rübe',translation:'свекла'},
+      {id:107,original:'die Kohlrübe',translation:'брюква'},{id:108,original:'das Radieschen',translation:'редис'},
+      {id:109,original:'der Rettich',translation:'редька'},{id:110,original:'der / die Sellerie',translation:'сельдерей'},
+      {id:111,original:'der Pastinak / die Pastinake',translation:'пастернак'},{id:112,original:'die Petersilie',translation:'петрушка'},
+      {id:113,original:'der Weißkohl',translation:'белокочанная капуста'},{id:114,original:'der Rotkohl',translation:'краснокочанная капуста'},
+      {id:115,original:'der Blumenkohl',translation:'цветная капуста'},{id:116,original:'der Rosenkohl',translation:'брюссельская капуста'},
+      {id:117,original:'der Kohlrabi',translation:'кольраби'},{id:118,original:'die Tomate',translation:'помидор'},
+      {id:119,original:'die Aubergine',translation:'баклажан'},{id:120,original:'die Gurke',translation:'огурец'},
+      {id:121,original:'die Melone',translation:'дыня'},{id:122,original:'die Wassermelone',translation:'арбуз'},
+      {id:123,original:'der Kürbis',translation:'тыква'},{id:124,original:'der Melonenkürbis',translation:'кабачок'},
+      {id:125,original:'der Tellerkürbis',translation:'патиссон'},{id:126,original:'die Bohne',translation:'боб, фасоль'},
+      {id:127,original:'die Erbse',translation:'горох'},{id:128,original:'die Linse',translation:'чечевица'},
+      {id:129,original:'die Soja',translation:'соя'},{id:130,original:'die Zwiebel',translation:'лук'},
+      {id:131,original:'der Zwiebellauch',translation:'зеленый лук'},{id:132,original:'der Schnittlauch',translation:'лук-резанец'},
+      {id:133,original:'der Wildlauch',translation:'черемша'},{id:134,original:'der Poree',translation:'лук-порей'},
+      {id:135,original:'der Knoblauch',translation:'чеснок'}]},
+    greens:{id:'greens',name:'Зелень',words:[
+      {id:201,original:'der Salat',translation:'салат'},{id:202,original:'der Spinat',translation:'шпинат'},
+      {id:203,original:'der Sauerampfer',translation:'щавель'},{id:204,original:'der Dill',translation:'укроп'},
+      {id:205,original:'die Blattpetersilie',translation:'листовая петрушка'},{id:206,original:'der Estragon',translation:'эстрагон'},
+      {id:207,original:'das Basilikum',translation:'базилик'},{id:208,original:'der Meerrettich',translation:'хрен'},
+      {id:209,original:'die Pfefferminze',translation:'перечная мята'},{id:210,original:'der Koriander',translation:'кориандр'},
+      {id:211,original:'der Kümmel',translation:'тмин'}]},
+    mushrooms:{id:'mushrooms',name:'Грибы',words:[
+      {id:301,original:'der Pilz',translation:'гриб'},{id:302,original:'der Steinpilz',translation:'белый гриб'},
+      {id:303,original:'der Birkenpilz',translation:'подберезовик'},{id:304,original:'der Rothäuptchen',translation:'подосиновик'},
+      {id:305,original:'der Butterpilz',translation:'масленок'},{id:306,original:'der Milchpilz',translation:'груздь'},
+      {id:307,original:'der Pfefferling',translation:'лисичка'},{id:308,original:'der Champingnon',translation:'шампиньон'},
+      {id:309,original:'die Trüffel',translation:'трюфель'}]},
+    grains:{id:'grains',name:'Зерновые',words:[
+      {id:401,original:'der Reis',translation:'рис'},{id:402,original:'der Hafer',translation:'овес'},
+      {id:403,original:'der Mais',translation:'кукуруза'},{id:404,original:'der Grieß',translation:'манная крупа'},
+      {id:405,original:'der Buchweizen',translation:'гречиха'},{id:406,original:'die Graupe (pl Perlgraupen)',translation:'перловая крупа'},
+      {id:407,original:'die Hirse',translation:'просо, пшено'}]}
+  }}
+};
+
+const collectionIcons={
+  food:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v7a2 2 0 0 0 2 2v9M8 3v6M10 3v6"/><path d="M17 3c-1.7 0-2.5 1.3-2.5 3v6h2.5v9M17 3v20"/></svg>',
+  products:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5h18l-1.4 11a2 2 0 0 1-2 1.8H6.4a2 2 0 0 1-2-1.8z"/><path d="M8 7.5V6a4 4 0 0 1 8 0v1.5"/><path d="M9 12.5h6"/></svg>'
+};
+
+function getAllWords(){let a=[];for(const k in wordTopics){const t=wordTopics[k];if(t.words)a=a.concat(t.words);if(t.subcategories)for(const s in t.subcategories)a=a.concat(t.subcategories[s].words)}return a}
+function getTopicById(id){for(const k in wordTopics){const t=wordTopics[k];if(t.id===id)return{...t,parentId:null};if(t.subcategories)for(const s in t.subcategories){const sub=t.subcategories[s];if(sub.id===id)return{...sub,parentId:t.id}}}return null}
+
+/* ---------- mastery calculations ---------- */
+function getTopicMasteryPct(topicId){
+  const topic=getTopicById(topicId);
+  if(!topic)return 0;
+  let words=[];
+  if(topic.words)words=topic.words;
+  else if(topic.subcategories)for(const k in topic.subcategories)words=words.concat(topic.subcategories[k].words);
+  if(!words.length)return 0;
+  let actual=0;
+  words.forEach(w=>{const s=appData.userProgress.wordStats[w.id];if(s)actual+=Math.min(s.correct,3)});
+  return Math.min(100,Math.round((actual/(words.length*3))*100));
+}
+function getMasteryLevel(pct){return pct>=75?3:pct>=40?2:pct>0?1:0}
+function getOverallMasteryPct(){
+  const all=getAllWords();let actual=0;
+  all.forEach(w=>{const s=appData.userProgress.wordStats[w.id];if(s)actual+=Math.min(s.correct,3)});
+  return Math.min(100,Math.round((actual/(all.length*3))*100));
+}
+function trackAnswer(wordId,isCorrect){
+  if(!appData.userProgress.wordStats)appData.userProgress.wordStats={};
+  if(!appData.userProgress.wordStats[wordId])appData.userProgress.wordStats[wordId]={correct:0,wrong:0};
+  if(isCorrect)appData.userProgress.wordStats[wordId].correct++;
+  else appData.userProgress.wordStats[wordId].wrong++;
+  saveUserProgress();
+}
+
+const appData={currentPage:'home',currentTopic:null,testMode:null,testType:null,currentTest:null,testResults:[],currentWordIndex:0,score:0,incorrectAnswers:[],userProgress:loadUserProgress()};
+function loadUserProgress(){
+  try{
+    const s=localStorage.getItem('vocabMasterProgress');
+    const base=s?JSON.parse(s):{};
+    return{learnedWords:base.learnedWords||[],testResults:base.testResults||[],totalTests:base.totalTests||0,averageScore:base.averageScore||0,topicProgress:base.topicProgress||{},wordStats:base.wordStats||{}};
+  }catch(e){return{learnedWords:[],testResults:[],totalTests:0,averageScore:0,topicProgress:{},wordStats:{}}}
+}
+function saveUserProgress(){try{localStorage.setItem('vocabMasterProgress',JSON.stringify(appData.userProgress))}catch(e){}}
+function updateUserStats(){appData.userProgress.totalTests++;const t=appData.userProgress.averageScore*(appData.userProgress.totalTests-1)+(appData.score/appData.testResults.length*100);appData.userProgress.averageScore=t/appData.userProgress.totalTests;appData.userProgress.testResults.push({date:new Date().toISOString(),score:appData.score,total:appData.testResults.length,accuracy:Math.round((appData.score/appData.testResults.length)*100),topic:appData.currentTopic,type:appData.testType});if(appData.userProgress.testResults.length>10)appData.userProgress.testResults=appData.userProgress.testResults.slice(-10);saveUserProgress()}
+function initTelegram(){if(typeof Telegram!=='undefined'&&Telegram.WebApp){Telegram.WebApp.ready();Telegram.WebApp.expand();try{if(Telegram.WebApp.isVersionAtLeast('6.1')){Telegram.WebApp.setHeaderColor('#151614');Telegram.WebApp.setBackgroundColor('#151614')}if(Telegram.WebApp.isVersionAtLeast('7.10'))Telegram.WebApp.setBottomBarColor('#151614')}catch(e){}return true}return false}
+
+function showMainInterface(){
+  const totalWords=getAllWords().length;
+  const totalTopics=Object.keys(wordTopics).length+Object.values(wordTopics).reduce((a,t)=>a+(t.subcategories?Object.keys(t.subcategories).length:0),0);
+  const overallPct=getOverallMasteryPct();
+  const app=document.getElementById('app');
+  app.innerHTML=`
+    <main class="main-content home-content">
+
+      <div class="home-topline">
+        <span class="dot" aria-hidden="true"></span>
+        <span>Deutsch · Praxis</span>
+        <span class="rule" aria-hidden="true"></span>
+        <span>Sammlung 01</span>
+      </div>
+
+      <section class="home-stats" aria-label="Статистика обучения">
+        <div class="stats-grid">
+          <div><div class="stat-value">${totalWords}</div><div class="stat-label">слов в коллекции</div></div>
+          <div><div class="stat-value">${totalTopics}</div><div class="stat-label">тем для изучения</div></div>
+          <div><div class="stat-value">${Math.round(appData.userProgress.averageScore)}<small>%</small></div><div class="stat-label">верных ответов</div></div>
         </div>
-    </div>
+        <div class="mastery-row">
+          <div class="mastery-head">
+            <span>Прогресс коллекции</span>
+            <span>${overallPct}%</span>
+          </div>
+          <div class="mastery-bar"><div class="mastery-fill" style="width:${overallPct}%"></div></div>
+          <div class="mastery-note">${overallPct===0?'Пройдите первый тест, чтобы отслеживать прогресс':'Слова закреплены, если отвечены верно трижды'}</div>
+        </div>
+      </section>
 
-    <script>
-        // НОВЫЙ СЛОВАРЬ: только те слова, которые прислал пользователь (еда, кухня, посуда, блюда)
-        const wordTopics = {
-            food: {
-                id: 'food',
-                name: '🍽️ Еда и кухня',
-                icon: '🍽️',
-                words: [
-                    { id: 1, original: 'die Milch', translation: 'молоко' },
-                    { id: 2, original: 'Vollmilch', translation: 'цельное молоко' },
-                    { id: 3, original: 'die Milch aufkochen', translation: 'вскипятить молоко' },
-                    { id: 4, original: 'der Zucker', translation: 'сахар' },
-                    { id: 5, original: 'das Geschirr', translation: 'посуда' },
-                    { id: 6, original: 'der Teller', translation: 'тарелка' },
-                    { id: 7, original: 'die Tasse', translation: 'чашка' },
-                    { id: 8, original: 'das Glas', translation: 'стакан, рюмка, бокал' },
-                    { id: 9, original: 'der Löffel', translation: 'ложка' },
-                    { id: 10, original: 'die Gabel', translation: 'вилка' },
-                    { id: 11, original: 'das Messer', translation: 'нож' },
-                    { id: 12, original: 'die Vorspeise', translation: 'закуска' },
-                    { id: 13, original: 'die Suppe', translation: 'суп; первое блюдо' },
-                    { id: 14, original: 'die Kohlsuppe', translation: 'щи' },
-                    { id: 15, original: 'die Fischsuppe', translation: 'уха' },
-                    { id: 16, original: 'das Gericht', translation: 'блюдо (еда)' },
-                    { id: 17, original: 'das Hauptgericht', translation: 'основное (второе) блюдо' },
-                    { id: 18, original: 'die Nachspeise', translation: 'десерт' },
-                    { id: 19, original: 'das Fleisch', translation: 'мясо' },
-                    { id: 20, original: 'das Fleischgericht', translation: 'мясное блюдо' },
-                    { id: 21, original: 'das Schweinekotelett', translation: 'свиная отбивная' },
-                    { id: 22, original: 'das Steak', translation: 'антрекот, стейк' },
-                    { id: 23, original: 'der Fisch', translation: 'рыба' },
-                    { id: 24, original: 'die Kartoffel', translation: 'картофель (часто во мн. ч.)' },
-                    { id: 25, original: 'die Salzkartoffeln', translation: 'вареный картофель' },
-                    { id: 26, original: 'die Bratkartoffeln', translation: 'жареный картофель' },
-                    { id: 27, original: 'das Kartoffelpüree', translation: 'картофельное пюре' },
-                    { id: 28, original: 'die Pommes frites', translation: 'картофель фри' },
-                    { id: 29, original: 'die Soße', translation: 'соус' },
-                    { id: 30, original: 'das Eis', translation: 'мороженое' },
-                    { id: 31, original: 'das Schokoladeneis', translation: 'шоколадное мороженое' },
-                    { id: 32, original: 'das Obst', translation: 'фрукты' },
-                    { id: 33, original: 'das Gemüse', translation: 'овощи' },
-                    { id: 34, original: 'der Salat', translation: 'салат' },
-                    { id: 35, original: 'der Fleischsalat', translation: 'мясной салат' },
-                    { id: 36, original: 'der Obstsalat', translation: 'фруктовый салат' }
-                ]
-            }
-        };
+      <section aria-labelledby="practice-heading">
+        <div class="section-heading"><h2 id="practice-heading">В своём ритме</h2><span>Немного, но каждый день</span></div>
+        <div class="practice-grid">
+          <button class="practice-card" onclick="showTestSelection()">
+            <span class="practice-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m13 3-8 11h6l-1 7 9-12h-6z"/></svg></span>
+            <span><span class="practice-title">Проверить себя</span><span class="practice-description">Три формата тестирования</span></span>
+            <span class="practice-arrow" aria-hidden="true">↗</span>
+          </button>
+          <button class="practice-card" onclick="showPage('dictionary')">
+            <span class="practice-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M12 5Q6 2 3 4v15q4-2 9 1 5-3 9-1V4q-4-2-9 1v15"/></svg></span>
+            <span><span class="practice-title">Словарь</span><span class="practice-description">Все слова и переводы</span></span>
+            <span class="practice-arrow" aria-hidden="true">↗</span>
+          </button>
+        </div>
+      </section>
 
-        // Получить все слова из всех тем
-        function getAllWords() {
-            let allWords = [];
-            for (const topicKey in wordTopics) {
-                allWords = allWords.concat(wordTopics[topicKey].words);
-            }
-            return allWords;
-        }
+      <section aria-labelledby="collections-heading">
+        <div class="section-heading"><h2 id="collections-heading">Что будем учить?</h2><span>Коллекции</span></div>
+        <div class="collection-list">
+          ${Object.values(wordTopics).map(topic=>{
+            const pct=getTopicMasteryPct(topic.id);
+            const lvl=getMasteryLevel(pct);
+            const count=topic.words?topic.words.length:Object.values(topic.subcategories).reduce((s,x)=>s+x.words.length,0);
+            const dots=[1,2,3].map(i=>`<span class="dot ${i<=lvl?'filled':''}"></span>`).join('');
+            return `
+              <button class="collection-row" onclick="${topic.subcategories?`showSubcategoriesPage('${topic.id}')`:`showTopicWords('${topic.id}')`}" aria-label="${topic.name} — прогресс ${pct}%">
+                <span class="collection-icon" aria-hidden="true">${collectionIcons[topic.id]||collectionIcons.food}</span>
+                <span class="collection-body">
+                  <span class="collection-label">${topic.name}</span>
+                  <span class="collection-dots" aria-hidden="true">${dots}</span>
+                </span>
+                <span class="collection-count">${count} слов</span>
+                <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg>
+              </button>`;
+          }).join('')}
+        </div>
+      </section>
 
-        // Данные приложения
-        const appData = {
-            currentPage: 'home',
-            currentTopic: null,
-            user: { name: 'Студент', role: 'user' },
-            testMode: null,
-            testType: null,
-            currentTest: null,
-            testResults: [],
-            currentWordIndex: 0,
-            score: 0,
-            incorrectAnswers: [],
-            userProgress: loadUserProgress()
-        };
+      ${appData.userProgress.testResults.length>0?`
+      <section class="recent-results">
+        <div class="section-heading"><h2>Последние результаты</h2><span>Ваша практика</span></div>
+        ${appData.userProgress.testResults.slice(-3).reverse().map(r=>`
+          <div class="result-item ${r.accuracy>=70?'correct':'incorrect'}">
+            <div><strong>${r.accuracy}%</strong><div style="color:#666;font-size:12px;">${new Date(r.date).toLocaleDateString()}</div></div>
+            <div>${r.score}/${r.total}</div>
+          </div>`).join('')}
+      </section>`:''}
 
-        // Загрузка прогресса пользователя
-        function loadUserProgress() {
-            try {
-                const saved = localStorage.getItem('vocabMasterProgress');
-                return saved ? JSON.parse(saved) : {
-                    learnedWords: [],
-                    testResults: [],
-                    totalTests: 0,
-                    averageScore: 0,
-                    topicProgress: {}
-                };
-            } catch (e) {
-                return {
-                    learnedWords: [],
-                    testResults: [],
-                    totalTests: 0,
-                    averageScore: 0,
-                    topicProgress: {}
-                };
-            }
-        }
+    </main>
+    <nav class="navigation" aria-label="Основная навигация">
+      <button class="nav-item active" onclick="showPage('home')">Главная</button>
+      <button class="nav-item" onclick="showTopicsPage()">Темы</button>
+      <button class="nav-item" onclick="showTestSelection()">Тест</button>
+      <button class="nav-item" onclick="showPage('dictionary')">Словарь</button>
+    </nav>
+  `;
+}
 
-        // Сохранение прогресса пользователя
-        function saveUserProgress() {
-            try {
-                localStorage.setItem('vocabMasterProgress', JSON.stringify(appData.userProgress));
-            } catch (e) {
-                console.error('Не удалось сохранить прогресс:', e);
-            }
-        }
+function showTopicsPage(){const app=document.getElementById('app');app.innerHTML=`
+<header class="header"><div class="header-content"><div class="logo-text">Темы</div><button onclick="showPage('home')" style="background:none;border:none;color:#0056b3;cursor:pointer;">← Назад</button></div></header>
+<main class="main-content">
+<div class="card"><h2>Выберите тему</h2><div class="grid grid-2">
+${Object.values(wordTopics).map(t=>`<div class="topic-card" onclick="${t.subcategories?`showSubcategoriesPage('${t.id}')`:`showTopicWords('${t.id}')`}"><div class="topic-name">${t.name}</div><div class="topic-count">${t.words?t.words.length:Object.values(t.subcategories).reduce((a,s)=>a+s.words.length,0)} слов</div></div>`).join('')}
+</div></div>
+<div class="card"><button class="btn btn-primary" onclick="showLearnPage()">Все слова сразу</button></div>
+</main>
+<nav class="navigation"><button class="nav-item" onclick="showPage('home')">Главная</button><button class="nav-item active">Темы</button><button class="nav-item" onclick="showTestSelection()">Тест</button><button class="nav-item" onclick="showPage('dictionary')">Словарь</button></nav>`}
 
-        // Обновление статистики после теста
-        function updateUserStats() {
-            appData.userProgress.totalTests++;
-            
-            const totalScore = appData.userProgress.averageScore * (appData.userProgress.totalTests - 1) + 
-                             (appData.score / appData.testResults.length * 100);
-            appData.userProgress.averageScore = totalScore / appData.userProgress.totalTests;
-            
-            appData.userProgress.testResults.push({
-                date: new Date().toISOString(),
-                score: appData.score,
-                total: appData.testResults.length,
-                accuracy: Math.round((appData.score / appData.testResults.length) * 100),
-                topic: appData.currentTopic,
-                type: appData.testType
-            });
-            
-            if (appData.userProgress.testResults.length > 10) {
-                appData.userProgress.testResults = appData.userProgress.testResults.slice(-10);
-            }
-            
-            saveUserProgress();
-        }
+function showSubcategoriesPage(gid){const g=wordTopics[gid];if(!g||!g.subcategories)return;const app=document.getElementById('app');app.innerHTML=`
+<header class="header"><div class="header-content"><div class="logo-text">${g.name}</div><button onclick="showTopicsPage()" style="background:none;border:none;color:#0056b3;cursor:pointer;">← Назад</button></div></header>
+<main class="main-content"><div class="card"><h2>Выберите подкатегорию</h2><div class="grid grid-2">
+${Object.values(g.subcategories).map(s=>`<div class="topic-card" onclick="showTopicWords('${s.id}')"><div class="topic-name">${s.name}</div><div class="topic-count">${s.words.length} слов</div></div>`).join('')}
+</div></div></main>
+<nav class="navigation"><button class="nav-item" onclick="showPage('home')">Главная</button><button class="nav-item active">Темы</button><button class="nav-item" onclick="showTestSelection()">Тест</button><button class="nav-item" onclick="showPage('dictionary')">Словарь</button></nav>`}
 
-        // Инициализация Telegram
-        function initTelegram() {
-            if (typeof Telegram !== 'undefined' && Telegram.WebApp) {
-                console.log('📱 Telegram Web App detected');
-                Telegram.WebApp.ready();
-                Telegram.WebApp.expand();
-                return true;
-            }
-            console.log('🖥️ Standalone mode');
-            return false;
-        }
+function showTopicWords(tid){const t=getTopicById(tid);if(!t)return;appData.currentTopic=tid;const back=t.parentId?`showSubcategoriesPage('${t.parentId}')`:'showTopicsPage()';const app=document.getElementById('app');app.innerHTML=`
+<header class="header"><div class="header-content"><div class="logo-text">${t.name}</div><button onclick="${back}" style="background:none;border:none;color:#0056b3;cursor:pointer;">← Назад</button></div></header>
+<main class="main-content">
+<div class="card"><h2>${t.name}</h2><p>Нажмите на карточку, чтобы увидеть перевод</p><div class="grid">
+${t.words.map(w=>`<div class="card word-card" onclick="showWordTranslation(${w.id})"><div class="word-original">${w.original}</div><div class="word-translation hidden" id="translation-${w.id}">${w.translation}</div></div>`).join('')}
+</div></div>
+<div class="grid grid-2"><button class="btn btn-secondary" onclick="showTopicTestSelection('${tid}')">Тест по теме</button><button class="btn btn-primary" onclick="${back}">Назад</button></div>
+</main>
+<nav class="navigation"><button class="nav-item" onclick="showPage('home')">Главная</button><button class="nav-item active">Темы</button><button class="nav-item" onclick="showTestSelection()">Тест</button><button class="nav-item" onclick="showPage('dictionary')">Словарь</button></nav>`}
 
-        // Показать главный интерфейс
-        function showMainInterface() {
-            console.log('🎯 Showing main interface...');
-            
-            const totalWords = getAllWords().length;
-            
-            const app = document.getElementById('app');
-            app.innerHTML = `
-                <header class="header">
-                    <div class="header-content">
-                        <div class="logo-text">Vocab Master</div>
-                        <div style="color: #00d4ff; font-size: 14px;">👤 ${appData.user.name}</div>
-                    </div>
-                </header>
+function showTopicTestSelection(tid){const t=getTopicById(tid);if(!t)return;appData.currentTopic=tid;const app=document.getElementById('app');app.innerHTML=`
+<header class="header"><div class="header-content"><div class="logo-text">Тест: ${t.name}</div><button onclick="showTopicWords('${tid}')" style="background:none;border:none;color:#0056b3;cursor:pointer;">← Назад</button></div></header>
+<main class="main-content"><div class="card"><h2>Выберите тип теста</h2><div class="grid">
+<button class="btn btn-primary" onclick="showTopicTestModeSelection('${tid}','choice')">Выбор из вариантов</button>
+<button class="btn btn-secondary" onclick="showTopicTestModeSelection('${tid}','writing')">Письменный перевод</button>
+<button class="btn btn-secondary" onclick="showTopicTestModeSelection('${tid}','reverse')">Обратный перевод</button>
+</div></div></main>
+<nav class="navigation"><button class="nav-item" onclick="showPage('home')">Главная</button><button class="nav-item active">Темы</button><button class="nav-item active">Тест</button><button class="nav-item" onclick="showPage('dictionary')">Словарь</button></nav>`}
 
-                <main class="main-content">
-                    <div class="card">
-                        <h1>🍽️ Немецкий: еда и кухня</h1>
-                        <p>Изучайте немецкие слова по теме «Еда, посуда, блюда» с карточками и тестами</p>
-                        
-                        <div class="grid">
-                            <button class="btn btn-primary" onclick="showTopicsPage()">
-                                📚 Изучение слов
-                            </button>
-                            <button class="btn btn-secondary" onclick="showTestSelection()">
-                                🎯 Пройти тест
-                            </button>
-                            <button class="btn btn-secondary" onclick="showPage('dictionary')">
-                                📖 Весь словарь
-                            </button>
-                        </div>
-                    </div>
+function showTopicTestModeSelection(tid,tt){const t=getTopicById(tid);if(!t)return;appData.currentTopic=tid;appData.testType=tt;const app=document.getElementById('app');app.innerHTML=`
+<header class="header"><div class="header-content"><div class="logo-text">${t.name}</div><button onclick="showTopicTestSelection('${tid}')" style="background:none;border:none;color:#0056b3;cursor:pointer;">← Назад</button></div></header>
+<main class="main-content"><div class="card"><h2>Выберите режим</h2><p>${getTestTypeDescription(tt)}</p><div class="grid">
+<button class="btn btn-primary" onclick="startTest('once','${tid}')">Все слова один раз</button>
+<button class="btn btn-secondary" onclick="startTest('untilCorrect','${tid}')">До правильного ответа</button>
+</div></div></main>
+<nav class="navigation"><button class="nav-item" onclick="showPage('home')">Главная</button><button class="nav-item active">Темы</button><button class="nav-item active">Тест</button><button class="nav-item" onclick="showPage('dictionary')">Словарь</button></nav>`}
 
-                    <div class="card">
-                        <h3>Статистика</h3>
-                        <div class="stats-grid">
-                            <div class="stat">
-                                <div class="stat-value">${totalWords}</div>
-                                <div class="stat-label">Слов</div>
-                            </div>
-                            <div class="stat">
-                                <div class="stat-value">${Object.keys(wordTopics).length}</div>
-                                <div class="stat-label">Тем</div>
-                            </div>
-                            <div class="stat">
-                                <div class="stat-value">${Math.round(appData.userProgress.averageScore)}%</div>
-                                <div class="stat-label">Успех</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    ${appData.userProgress.testResults.length > 0 ? `
-                    <div class="card">
-                        <h3>Последние результаты</h3>
-                        <div class="test-options">
-                            ${appData.userProgress.testResults.slice(-3).reverse().map(result => `
-                                <div class="result-item ${result.accuracy >= 70 ? 'correct' : 'incorrect'}">
-                                    <div>
-                                        <strong>${result.accuracy}%</strong>
-                                        <div style="color: #666;">${new Date(result.date).toLocaleDateString()}</div>
-                                        <div style="color: #666; font-size: 10px;">${getTestTypeDescription(result.type)}</div>
-                                    </div>
-                                    <div>${result.score}/${result.total}</div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                    ` : ''}
-                </main>
+function showTestSelection(){let all=[];for(const k in wordTopics){const t=wordTopics[k];if(t.words)all.push(t);if(t.subcategories)for(const s in t.subcategories)all.push(t.subcategories[s])}const app=document.getElementById('app');app.innerHTML=`
+<header class="header"><div class="header-content"><div class="logo-text">Выбор теста</div><button onclick="showPage('home')" style="background:none;border:none;color:#0056b3;cursor:pointer;">← Назад</button></div></header>
+<main class="main-content">
+<div class="card"><h2>Выберите тип теста</h2><div class="grid">
+<button class="btn btn-primary" onclick="showTestModeSelection('choice')">Выбор из вариантов</button>
+<button class="btn btn-secondary" onclick="showTestModeSelection('writing')">Письменный перевод</button>
+<button class="btn btn-secondary" onclick="showTestModeSelection('reverse')">Обратный перевод</button>
+</div></div>
+<div class="card"><h3>Тесты по темам</h3><div class="grid grid-2">
+${all.map(t=>`<button class="btn btn-secondary" onclick="showTopicTestSelection('${t.id}')">${t.name}</button>`).join('')}
+</div></div></main>
+<nav class="navigation"><button class="nav-item" onclick="showPage('home')">Главная</button><button class="nav-item" onclick="showTopicsPage()">Темы</button><button class="nav-item active">Тест</button><button class="nav-item" onclick="showPage('dictionary')">Словарь</button></nav>`}
 
-                <nav class="navigation">
-                    <div class="nav-content">
-                        <button class="nav-item active" onclick="showPage('home')">
-                            <span class="nav-icon">🏠</span>
-                            <span>Главная</span>
-                        </button>
-                        <button class="nav-item" onclick="showTopicsPage()">
-                            <span class="nav-icon">📚</span>
-                            <span>Темы</span>
-                        </button>
-                        <button class="nav-item" onclick="showTestSelection()">
-                            <span class="nav-icon">🎯</span>
-                            <span>Тест</span>
-                        </button>
-                        <button class="nav-item" onclick="showPage('dictionary')">
-                            <span class="nav-icon">📖</span>
-                            <span>Словарь</span>
-                        </button>
-                    </div>
-                </nav>
-            `;
-        }
+function showTestModeSelection(tt){appData.testType=tt;const app=document.getElementById('app');app.innerHTML=`
+<header class="header"><div class="header-content"><div class="logo-text">Режим теста</div><button onclick="showTestSelection()" style="background:none;border:none;color:#0056b3;cursor:pointer;">← Назад</button></div></header>
+<main class="main-content"><div class="card"><h2>Выберите режим</h2><p>${getTestTypeDescription(tt)}</p><div class="grid">
+<button class="btn btn-primary" onclick="startTest('once')">Все слова один раз</button>
+<button class="btn btn-secondary" onclick="startTest('untilCorrect')">До правильного ответа</button>
+<button class="btn btn-secondary" onclick="startTest('difficult')">Только сложные слова</button>
+</div></div></main>
+<nav class="navigation"><button class="nav-item" onclick="showPage('home')">Главная</button><button class="nav-item" onclick="showTopicsPage()">Темы</button><button class="nav-item active">Тест</button><button class="nav-item" onclick="showPage('dictionary')">Словарь</button></nav>`}
 
-        // Показать страницу с темами (у нас одна тема)
-        function showTopicsPage() {
-            const app = document.getElementById('app');
-            app.innerHTML = `
-                <header class="header">
-                    <div class="header-content">
-                        <div class="logo-text">📚 Темы для изучения</div>
-                        <button onclick="showPage('home')" style="background: none; border: none; color: #00d4ff; cursor: pointer;">← Назад</button>
-                    </div>
-                </header>
+function getTestTypeDescription(t){if(t==='choice')return'Тест с выбором ответа';if(t==='writing')return'Письменный тест';if(t==='reverse')return'Перевод с русского на немецкий';return'Тест'}
 
-                <main class="main-content">
-                    <div class="card">
-                        <h2>Выберите тему</h2>
-                        <p>Изучайте слова по тематическим группам</p>
-                        
-                        <div class="grid grid-2">
-                            ${Object.values(wordTopics).map(topic => `
-                                <div class="topic-card" onclick="showTopicWords('${topic.id}')">
-                                    <div class="topic-icon">${topic.icon}</div>
-                                    <div class="topic-name">${topic.name}</div>
-                                    <div class="topic-count">${topic.words.length} слов</div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
+function startTest(mode,tid=null){appData.testMode=mode;if(tid){const t=getTopicById(tid);appData.currentTest=shuffleArray([...t.words]);appData.currentTopic=tid}else if(mode==='difficult'){appData.currentTest=shuffleArray(getAllWords()).slice(0,10);appData.currentTopic='all'}else{appData.currentTest=shuffleArray(getAllWords());appData.currentTopic='all'}appData.currentWordIndex=0;appData.score=0;appData.incorrectAnswers=[];appData.testResults=[];showTestQuestion()}
 
-                    <div class="card">
-                        <button class="btn btn-primary" onclick="showLearnPage()">
-                            📚 Все слова сразу
-                        </button>
-                    </div>
-                </main>
+function showTestQuestion(){if(appData.currentWordIndex>=appData.currentTest.length){if(appData.testMode==='untilCorrect'&&appData.incorrectAnswers.length>0){appData.currentTest=[...appData.incorrectAnswers];appData.currentWordIndex=0;appData.incorrectAnswers=[]}else{updateUserStats();showTestResults();return}}const w=appData.currentTest[appData.currentWordIndex];if(appData.testType==='choice')showChoiceTest(w);else if(appData.testType==='writing')showWritingTest(w);else if(appData.testType==='reverse')showReverseTest(w)}
 
-                <nav class="navigation">
-                    <div class="nav-content">
-                        <button class="nav-item" onclick="showPage('home')">
-                            <span class="nav-icon">🏠</span>
-                            <span>Главная</span>
-                        </button>
-                        <button class="nav-item active">
-                            <span class="nav-icon">📚</span>
-                            <span>Темы</span>
-                        </button>
-                        <button class="nav-item" onclick="showTestSelection()">
-                            <span class="nav-icon">🎯</span>
-                            <span>Тест</span>
-                        </button>
-                        <button class="nav-item" onclick="showPage('dictionary')">
-                            <span class="nav-icon">📖</span>
-                            <span>Словарь</span>
-                        </button>
-                    </div>
-                </nav>
-            `;
-        }
+function showChoiceTest(w){const opts=[w.translation];const all=appData.currentTopic&&appData.currentTopic!=='all'?getTopicById(appData.currentTopic).words:getAllWords();const other=all.filter(x=>x.id!==w.id).sort(()=>Math.random()-.5).slice(0,3).map(x=>x.translation);const allOpts=shuffleArray([...opts,...other]);const topic=appData.currentTopic&&appData.currentTopic!=='all'?getTopicById(appData.currentTopic):null;const app=document.getElementById('app');app.innerHTML=`
+<header class="header"><div class="header-content"><div class="logo-text">${topic?topic.name:'Тест'}</div><div>${appData.currentWordIndex+1}/${appData.currentTest.length}</div></div></header>
+<main class="main-content">
+<div class="test-word"><h1>${w.original}</h1><p>Переведите на русский</p></div>
+<div class="test-options">${allOpts.map(o=>`<button class="option-btn" onclick="checkChoiceAnswer('${o.replace(/'/g,"\\'")}','${w.translation.replace(/'/g,"\\'")}')">${o}</button>`).join('')}</div>
+<button class="btn btn-primary hidden" id="next-btn" onclick="nextTestQuestion()">Следующее слово</button>
+<div class="progress-bar"><div class="progress-fill" style="width:${(appData.currentWordIndex/appData.currentTest.length)*100}%"></div></div>
+</main>
+<nav class="navigation"><button class="nav-item" onclick="showPage('home')">Главная</button><button class="nav-item" onclick="showTopicsPage()">Темы</button><button class="nav-item active">Тест</button><button class="nav-item" onclick="showPage('dictionary')">Словарь</button></nav>`}
 
-        // Показать слова конкретной темы
-        function showTopicWords(topicId) {
-            const topic = wordTopics[topicId];
-            appData.currentTopic = topicId;
-            
-            const app = document.getElementById('app');
-            app.innerHTML = `
-                <header class="header">
-                    <div class="header-content">
-                        <div class="logo-text">${topic.icon} ${topic.name}</div>
-                        <button onclick="showTopicsPage()" style="background: none; border: none; color: #00d4ff; cursor: pointer;">← Назад</button>
-                    </div>
-                </header>
+function checkChoiceAnswer(sel,cor){const opts=document.querySelectorAll('.option-btn');const nb=document.getElementById('next-btn');opts.forEach(o=>{const t=o.textContent.trim();o.style.pointerEvents='none';if(t===cor)o.classList.add('correct');if(t===sel&&t!==cor)o.classList.add('incorrect')});const ok=sel===cor;const wid=appData.currentTest[appData.currentWordIndex].id;trackAnswer(wid,ok);appData.testResults.push({word:appData.currentTest[appData.currentWordIndex],selected:sel,correct:cor,isCorrect:ok});if(ok)appData.score++;else appData.incorrectAnswers.push(appData.currentTest[appData.currentWordIndex]);nb.classList.remove('hidden')}
 
-                <main class="main-content">
-                    <div class="card">
-                        <h2>${topic.name}</h2>
-                        <p>Нажмите на карточку, чтобы увидеть перевод</p>
-                        
-                        <div class="grid">
-                            ${topic.words.map(word => `
-                                <div class="card word-card" onclick="showWordTranslation(${word.id})">
-                                    <div class="word-original">${word.original}</div>
-                                    <div class="word-translation hidden" id="translation-${word.id}">${word.translation}</div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
+function showWritingTest(w){const app=document.getElementById('app');app.innerHTML=`
+<header class="header"><div class="header-content"><div class="logo-text">Письменный тест</div><div>${appData.currentWordIndex+1}/${appData.currentTest.length}</div></div></header>
+<main class="main-content">
+<div class="test-word"><h1>${w.original}</h1><p>Напишите перевод на русском</p></div>
+<input type="text" class="test-input" id="answer-input" placeholder="Введите перевод..." onkeypress="if(event.key==='Enter')checkWritingAnswer()">
+<div id="result-message"></div>
+<button class="btn btn-primary hidden" id="next-btn" onclick="nextTestQuestion()">Следующее слово</button>
+<div class="progress-bar"><div class="progress-fill" style="width:${(appData.currentWordIndex/appData.currentTest.length)*100}%"></div></div>
+</main>
+<nav class="navigation"><button class="nav-item" onclick="showPage('home')">Главная</button><button class="nav-item" onclick="showTopicsPage()">Темы</button><button class="nav-item active">Тест</button><button class="nav-item" onclick="showPage('dictionary')">Словарь</button></nav>`;document.getElementById('answer-input').focus()}
 
-                    <div class="grid grid-2">
-                        <button class="btn btn-secondary" onclick="showTopicTestSelection('${topicId}')">
-                            🎯 Тест по теме
-                        </button>
-                        <button class="btn btn-primary" onclick="showTopicsPage()">
-                            📚 Другие темы
-                        </button>
-                    </div>
-                </main>
+function checkWritingAnswer(){const i=document.getElementById('answer-input');const r=document.getElementById('result-message');const nb=document.getElementById('next-btn');const w=appData.currentTest[appData.currentWordIndex];const ua=i.value.trim().toLowerCase();const ca=w.translation.toLowerCase();const ok=ua===ca;if(ok){i.classList.add('correct');r.innerHTML='<p style="color:#28a745;">Верно</p>';appData.score++}else{i.classList.add('incorrect');r.innerHTML=`<p style="color:#dc3545;">Неверно</p><p style="color:#28a745;">Правильный ответ: ${w.translation}</p>`;appData.incorrectAnswers.push(w)}trackAnswer(w.id,ok);appData.testResults.push({word:w,selected:ua,correct:ca,isCorrect:ok});i.disabled=true;nb.classList.remove('hidden')}
 
-                <nav class="navigation">
-                    <div class="nav-content">
-                        <button class="nav-item" onclick="showPage('home')">
-                            <span class="nav-icon">🏠</span>
-                            <span>Главная</span>
-                        </button>
-                        <button class="nav-item active">
-                            <span class="nav-icon">📚</span>
-                            <span>Темы</span>
-                        </button>
-                        <button class="nav-item" onclick="showTestSelection()">
-                            <span class="nav-icon">🎯</span>
-                            <span>Тест</span>
-                        </button>
-                        <button class="nav-item" onclick="showPage('dictionary')">
-                            <span class="nav-icon">📖</span>
-                            <span>Словарь</span>
-                        </button>
-                    </div>
-                </nav>
-            `;
-        }
+function showReverseTest(w){const app=document.getElementById('app');app.innerHTML=`
+<header class="header"><div class="header-content"><div class="logo-text">Обратный тест</div><div>${appData.currentWordIndex+1}/${appData.currentTest.length}</div></div></header>
+<main class="main-content">
+<div class="test-word"><h1>${w.translation}</h1><p>Напишите перевод на немецком</p></div>
+<input type="text" class="test-input" id="answer-input" placeholder="Введите перевод..." onkeypress="if(event.key==='Enter')checkReverseAnswer()">
+<div id="result-message"></div>
+<button class="btn btn-primary hidden" id="next-btn" onclick="nextTestQuestion()">Следующее слово</button>
+<div class="progress-bar"><div class="progress-fill" style="width:${(appData.currentWordIndex/appData.currentTest.length)*100}%"></div></div>
+</main>
+<nav class="navigation"><button class="nav-item" onclick="showPage('home')">Главная</button><button class="nav-item" onclick="showTopicsPage()">Темы</button><button class="nav-item active">Тест</button><button class="nav-item" onclick="showPage('dictionary')">Словарь</button></nav>`;document.getElementById('answer-input').focus()}
 
-        // Показать выбор типа теста для конкретной темы
-        function showTopicTestSelection(topicId) {
-            const topic = wordTopics[topicId];
-            appData.currentTopic = topicId;
-            
-            const app = document.getElementById('app');
-            app.innerHTML = `
-                <header class="header">
-                    <div class="header-content">
-                        <div class="logo-text">${topic.icon} Тест: ${topic.name}</div>
-                        <button onclick="showTopicWords('${topicId}')" style="background: none; border: none; color: #00d4ff; cursor: pointer;">← Назад</button>
-                    </div>
-                </header>
+function checkReverseAnswer(){const i=document.getElementById('answer-input');const r=document.getElementById('result-message');const nb=document.getElementById('next-btn');const w=appData.currentTest[appData.currentWordIndex];const ua=i.value.trim().toLowerCase();const ca=w.original.toLowerCase();const ok=ua===ca;if(ok){i.classList.add('correct');r.innerHTML='<p style="color:#28a745;">Верно</p>';appData.score++}else{i.classList.add('incorrect');r.innerHTML=`<p style="color:#dc3545;">Неверно</p><p style="color:#28a745;">Правильный ответ: ${w.original}</p>`;appData.incorrectAnswers.push(w)}trackAnswer(w.id,ok);appData.testResults.push({word:w,selected:ua,correct:ca,isCorrect:ok});i.disabled=true;nb.classList.remove('hidden')}
 
-                <main class="main-content">
-                    <div class="card">
-                        <h2>Выберите тип теста</h2>
-                        <p>Тестирование по теме "${topic.name}"</p>
-                        
-                        <div class="grid">
-                            <button class="btn btn-primary" onclick="showTopicTestModeSelection('${topicId}', 'choice')">
-                                📝 Выбор из вариантов
-                            </button>
-                            <button class="btn btn-secondary" onclick="showTopicTestModeSelection('${topicId}', 'writing')">
-                                ✏️ Письменный перевод
-                            </button>
-                            <button class="btn btn-secondary" onclick="showTopicTestModeSelection('${topicId}', 'reverse')">
-                                🔄 Обратный перевод
-                            </button>
-                        </div>
-                    </div>
-                </main>
+function nextTestQuestion(){appData.currentWordIndex++;showTestQuestion()}
 
-                <nav class="navigation">
-                    <div class="nav-content">
-                        <button class="nav-item" onclick="showPage('home')">
-                            <span class="nav-icon">🏠</span>
-                            <span>Главная</span>
-                        </button>
-                        <button class="nav-item active">
-                            <span class="nav-icon">📚</span>
-                            <span>Темы</span>
-                        </button>
-                        <button class="nav-item active">
-                            <span class="nav-icon">🎯</span>
-                            <span>Тест</span>
-                        </button>
-                        <button class="nav-item" onclick="showPage('dictionary')">
-                            <span class="nav-icon">📖</span>
-                            <span>Словарь</span>
-                        </button>
-                    </div>
-                </nav>
-            `;
-        }
+function showTestResults(){const acc=Math.round((appData.score/appData.testResults.length)*100);const topic=appData.currentTopic&&appData.currentTopic!=='all'?getTopicById(appData.currentTopic):null;const app=document.getElementById('app');app.innerHTML=`
+<header class="header"><div class="header-content"><div class="logo-text">Результаты</div><button onclick="showPage('home')" style="background:none;border:none;color:#0056b3;cursor:pointer;">На главную</button></div></header>
+<main class="main-content">
+<div class="card"><div class="test-result"><h1>${acc>=80?'Отлично!':acc>=60?'Хорошо!':'Продолжайте учиться!'}</h1><p>Результаты теста${topic?' по теме "'+topic.name+'"':''}:</p><div style="font-size:48px;font-weight:bold;color:#0056b3;margin:16px 0;">${acc}%</div><p>Правильных ответов: ${appData.score} из ${appData.testResults.length}</p></div></div>
+${appData.incorrectAnswers.length>0?`<div class="card"><h3>Ошибки для повторения:</h3>${appData.incorrectAnswers.map(w=>`<div class="result-item incorrect"><div><strong>${w.original}</strong><div style="color:#666;">${w.translation}</div></div></div>`).join('')}</div>`:''}
+<div class="grid grid-2"><button class="btn btn-secondary" onclick="showTestSelection()">Новый тест</button><button class="btn btn-primary" onclick="${topic?`showTopicWords('${appData.currentTopic}')`:'showTopicsPage()'}">Учить слова</button></div>
+</main>`}
 
-        function showTopicTestModeSelection(topicId, testType) {
-            const topic = wordTopics[topicId];
-            appData.currentTopic = topicId;
-            appData.testType = testType;
-            
-            const app = document.getElementById('app');
-            app.innerHTML = `
-                <header class="header">
-                    <div class="header-content">
-                        <div class="logo-text">${topic.icon} ${topic.name}</div>
-                        <button onclick="showTopicTestSelection('${topicId}')" style="background: none; border: none; color: #00d4ff; cursor: pointer;">← Назад</button>
-                    </div>
-                </header>
+function showLearnPage(){const app=document.getElementById('app');app.innerHTML=`
+<header class="header"><div class="header-content"><div class="logo-text">Все слова</div><button onclick="showTopicsPage()" style="background:none;border:none;color:#0056b3;cursor:pointer;">← Назад</button></div></header>
+<main class="main-content"><div class="card"><h2>Все немецкие слова</h2><p>Нажмите на карточку, чтобы увидеть перевод</p><div class="grid">
+${getAllWords().map(w=>`<div class="card word-card" onclick="showWordTranslation(${w.id})"><div class="word-original">${w.original}</div><div class="word-translation hidden" id="translation-${w.id}">${w.translation}</div></div>`).join('')}
+</div></div></main>
+<nav class="navigation"><button class="nav-item" onclick="showPage('home')">Главная</button><button class="nav-item active">Темы</button><button class="nav-item" onclick="showTestSelection()">Тест</button><button class="nav-item" onclick="showPage('dictionary')">Словарь</button></nav>`}
 
-                <main class="main-content">
-                    <div class="card">
-                        <h2>Выберите режим</h2>
-                        <p>${getTestTypeDescription(testType)} по теме "${topic.name}"</p>
-                        
-                        <div class="grid">
-                            <button class="btn btn-primary" onclick="startTest('once', '${topicId}')">
-                                📋 Все слова один раз
-                            </button>
-                            <button class="btn btn-secondary" onclick="startTest('untilCorrect', '${topicId}')">
-                                🔁 До правильного ответа
-                            </button>
-                        </div>
-                    </div>
-                </main>
+function showWordTranslation(id){const t=document.getElementById(`translation-${id}`);if(t)t.classList.toggle('hidden')}
 
-                <nav class="navigation">
-                    <div class="nav-content">
-                        <button class="nav-item" onclick="showPage('home')">
-                            <span class="nav-icon">🏠</span>
-                            <span>Главная</span>
-                        </button>
-                        <button class="nav-item active">
-                            <span class="nav-icon">📚</span>
-                            <span>Темы</span>
-                        </button>
-                        <button class="nav-item active">
-                            <span class="nav-icon">🎯</span>
-                            <span>Тест</span>
-                        </button>
-                        <button class="nav-item" onclick="showPage('dictionary')">
-                            <span class="nav-icon">📖</span>
-                            <span>Словарь</span>
-                        </button>
-                    </div>
-                </nav>
-            `;
-        }
+function showPage(page){appData.currentPage=page;if(page==='home')showMainInterface();else if(page==='learn')showLearnPage();else if(page==='dictionary')showDictionary()}
 
-        // Показать выбор теста (глобальный)
-        function showTestSelection() {
-            const app = document.getElementById('app');
-            app.innerHTML = `
-                <header class="header">
-                    <div class="header-content">
-                        <div class="logo-text">🎯 Выбор теста</div>
-                        <button onclick="showPage('home')" style="background: none; border: none; color: #00d4ff; cursor: pointer;">← Назад</button>
-                    </div>
-                </header>
+/* ---------- dictionary with search ---------- */
+function showDictionary(){
+  const app=document.getElementById('app');
+  const sections=[];
+  for(const k in wordTopics){
+    const t=wordTopics[k];
+    if(t.words){
+      sections.push(renderDictSection(t.name,t.words));
+    }
+    if(t.subcategories){
+      for(const s in t.subcategories){
+        const sub=t.subcategories[s];
+        sections.push(renderDictSection(t.name+' · '+sub.name,sub.words));
+      }
+    }
+  }
+  app.innerHTML=`
+    <header class="header"><div class="header-content"><div class="logo-text">Словарь</div><button onclick="showPage('home')" style="background:none;border:none;color:#0056b3;cursor:pointer;">← Назад</button></div></header>
+    <main class="main-content">
+      <div class="dict-search-wrap">
+        <label class="dict-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input type="search" id="dict-search-input" placeholder="Найти слово или перевод..." autocomplete="off" oninput="filterDictionary(this.value)">
+        </label>
+      </div>
+      <div id="dict-results">${sections.join('')}</div>
+      <div class="dict-empty" id="dict-empty">Ничего не найдено. Попробуйте другое слово.</div>
+    </main>
+    <nav class="navigation"><button class="nav-item" onclick="showPage('home')">Главная</button><button class="nav-item" onclick="showTopicsPage()">Темы</button><button class="nav-item" onclick="showTestSelection()">Тест</button><button class="nav-item active">Словарь</button></nav>
+  `;
+}
+function renderDictSection(title,words){
+  const items=words.map(w=>`<div class="dict-word" data-search="${(w.original+' '+w.translation).toLowerCase()}"><strong>${w.original}</strong><span>${w.translation}</span></div>`).join('');
+  return `<section class="card dict-section"><h3 class="dict-section-title">${title} <small>${words.length}</small></h3>${items}</section>`;
+}
+function filterDictionary(query){
+  const q=query.trim().toLowerCase();
+  const results=document.getElementById('dict-results');
+  const empty=document.getElementById('dict-empty');
+  if(!results)return;
+  let anyVisible=false;
+  results.querySelectorAll('.dict-section').forEach(sec=>{
+    let visibleCount=0;
+    sec.querySelectorAll('.dict-word').forEach(item=>{
+      const text=item.getAttribute('data-search')||'';
+      const match=!q||text.includes(q);
+      item.style.display=match?'':'none';
+      if(match)visibleCount++;
+    });
+    sec.style.display=visibleCount>0?'':'none';
+    if(visibleCount>0)anyVisible=true;
+  });
+  if(empty)empty.classList.toggle('show',!anyVisible);
+}
 
-                <main class="main-content">
-                    <div class="card">
-                        <h2>Выберите тип теста</h2>
-                        <div class="grid">
-                            <button class="btn btn-primary" onclick="showTestModeSelection('choice')">
-                                📝 Выбор из вариантов
-                            </button>
-                            <button class="btn btn-secondary" onclick="showTestModeSelection('writing')">
-                                ✏️ Письменный перевод
-                            </button>
-                            <button class="btn btn-secondary" onclick="showTestModeSelection('reverse')">
-                                🔄 Обратный перевод
-                            </button>
-                        </div>
-                    </div>
+function shuffleArray(a){const s=[...a];for(let i=s.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[s[i],s[j]]=[s[j],s[i]]}return s}
 
-                    <div class="card">
-                        <h3>Тесты по темам</h3>
-                        <div class="grid grid-3">
-                            ${Object.values(wordTopics).map(topic => `
-                                <button class="btn btn-secondary" onclick="showTopicTestSelection('${topic.id}')">
-                                    ${topic.icon} ${topic.name}
-                                </button>
-                            `).join('')}
-                        </div>
-                    </div>
-                </main>
+function enhanceInterface(){
+  const app=document.getElementById('app');
+  app.querySelectorAll('.topic-card, .word-card').forEach(c=>{c.setAttribute('role','button');c.tabIndex=0});
+  app.querySelectorAll('.navigation').forEach(n=>n.setAttribute('aria-label','Основная навигация'));
+  const ai=app.querySelectorAll('.nav-item.active');if(ai.length>1)ai[0].classList.remove('active');
+  app.querySelectorAll('.nav-item.active').forEach(i=>i.setAttribute('aria-current','page'));
+  const a=app.querySelector('#answer-input');
+  if(a){a.setAttribute('aria-label','Введите перевод и нажмите Enter для проверки');a.setAttribute('enterkeyhint','done');a.setAttribute('autocomplete','off');const h=document.createElement('p');h.style.fontSize='12px';h.textContent='Enter — проверить ответ';a.insertAdjacentElement('afterend',h)}
+  const r=app.querySelector('#result-message');if(r)r.setAttribute('aria-live','polite');
+  const s=app.querySelector('#dict-search-input');
+  if(s)s.setAttribute('aria-label','Поиск по словарю');
+}
 
-                <nav class="navigation">
-                    <div class="nav-content">
-                        <button class="nav-item" onclick="showPage('home')">
-                            <span class="nav-icon">🏠</span>
-                            <span>Главная</span>
-                        </button>
-                        <button class="nav-item" onclick="showTopicsPage()">
-                            <span class="nav-icon">📚</span>
-                            <span>Темы</span>
-                        </button>
-                        <button class="nav-item active">
-                            <span class="nav-icon">🎯</span>
-                            <span>Тест</span>
-                        </button>
-                        <button class="nav-item" onclick="showPage('dictionary')">
-                            <span class="nav-icon">📖</span>
-                            <span>Словарь</span>
-                        </button>
-                    </div>
-                </nav>
-            `;
-        }
+function initApp(){
+  initTelegram();
+  const app=document.getElementById('app');
+  new MutationObserver(()=>{enhanceInterface();window.scrollTo(0,0)}).observe(app,{childList:true});
+  app.addEventListener('keydown',e=>{if(e.target.matches('[role="button"]')&&(e.key==='Enter'||e.key===' ')){e.preventDefault();e.target.click()}});
+  showMainInterface();
+}
 
-        function showTestModeSelection(testType) {
-            appData.testType = testType;
-            
-            const app = document.getElementById('app');
-            app.innerHTML = `
-                <header class="header">
-                    <div class="header-content">
-                        <div class="logo-text">📊 Режим теста</div>
-                        <button onclick="showTestSelection()" style="background: none; border: none; color: #00d4ff; cursor: pointer;">← Назад</button>
-                    </div>
-                </header>
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initApp);else initApp();
 
-                <main class="main-content">
-                    <div class="card">
-                        <h2>Выберите режим</h2>
-                        <p>${getTestTypeDescription(testType)}</p>
-                        
-                        <div class="grid">
-                            <button class="btn btn-primary" onclick="startTest('once')">
-                                📋 Все слова один раз
-                            </button>
-                            <button class="btn btn-secondary" onclick="startTest('untilCorrect')">
-                                🔁 До правильного ответа
-                            </button>
-                            <button class="btn btn-secondary" onclick="startTest('difficult')">
-                                🎯 Только сложные слова
-                            </button>
-                        </div>
-                    </div>
-                </main>
-
-                <nav class="navigation">
-                    <div class="nav-content">
-                        <button class="nav-item" onclick="showPage('home')">
-                            <span class="nav-icon">🏠</span>
-                            <span>Главная</span>
-                        </button>
-                        <button class="nav-item" onclick="showTopicsPage()">
-                            <span class="nav-icon">📚</span>
-                            <span>Темы</span>
-                        </button>
-                        <button class="nav-item active">
-                            <span class="nav-icon">🎯</span>
-                            <span>Тест</span>
-                        </button>
-                        <button class="nav-item" onclick="showPage('dictionary')">
-                            <span class="nav-icon">📖</span>
-                            <span>Словарь</span>
-                        </button>
-                    </div>
-                </nav>
-            `;
-        }
-
-        function getTestTypeDescription(type) {
-            switch(type) {
-                case 'choice': return 'Тест с выбором ответа';
-                case 'writing': return 'Письменный тест';
-                case 'reverse': return 'Перевод с русского на немецкий';
-                default: return 'Тест';
-            }
-        }
-
-        function startTest(mode, topicId = null) {
-            appData.testMode = mode;
-            
-            if (topicId) {
-                appData.currentTest = shuffleArray([...wordTopics[topicId].words]);
-                appData.currentTopic = topicId;
-            } else if (mode === 'difficult') {
-                appData.currentTest = shuffleArray(getAllWords()).slice(0, 10);
-                appData.currentTopic = 'all';
-            } else {
-                appData.currentTest = shuffleArray(getAllWords());
-                appData.currentTopic = 'all';
-            }
-            
-            appData.currentWordIndex = 0;
-            appData.score = 0;
-            appData.incorrectAnswers = [];
-            appData.testResults = [];
-            
-            showTestQuestion();
-        }
-
-        function showTestQuestion() {
-            if (appData.currentWordIndex >= appData.currentTest.length) {
-                if (appData.testMode === 'untilCorrect' && appData.incorrectAnswers.length > 0) {
-                    appData.currentTest = [...appData.incorrectAnswers];
-                    appData.currentWordIndex = 0;
-                    appData.incorrectAnswers = [];
-                } else {
-                    updateUserStats();
-                    showTestResults();
-                    return;
-                }
-            }
-            
-            const currentWord = appData.currentTest[appData.currentWordIndex];
-            
-            if (appData.testType === 'choice') {
-                showChoiceTest(currentWord);
-            } else if (appData.testType === 'writing') {
-                showWritingTest(currentWord);
-            } else if (appData.testType === 'reverse') {
-                showReverseTest(currentWord);
-            }
-        }
-
-        function showChoiceTest(word) {
-            const options = [word.translation];
-            const allWords = appData.currentTopic && appData.currentTopic !== 'all' ? 
-                wordTopics[appData.currentTopic].words : getAllWords();
-            
-            const otherWords = allWords
-                .filter(w => w.id !== word.id)
-                .sort(() => Math.random() - 0.5)
-                .slice(0, 3)
-                .map(w => w.translation);
-            
-            const allOptions = shuffleArray([...options, ...otherWords]);
-            
-            const topic = appData.currentTopic && appData.currentTopic !== 'all' ? 
-                wordTopics[appData.currentTopic] : null;
-            
-            const app = document.getElementById('app');
-            app.innerHTML = `
-                <header class="header">
-                    <div class="header-content">
-                        <div class="logo-text">${topic ? topic.icon + ' ' + topic.name : '📝 Тест'}</div>
-                        <div style="color: #00d4ff;">${appData.currentWordIndex + 1}/${appData.currentTest.length}</div>
-                    </div>
-                </header>
-
-                <main class="main-content">
-                    <div class="test-word">
-                        <h1 style="font-size: 36px; margin-bottom: 10px;">${word.original}</h1>
-                        <p style="color: #666;">Переведите на русский</p>
-                    </div>
-
-                    <div class="test-options" id="options-container">
-                        ${allOptions.map(option => `
-                            <button class="option-btn" onclick="checkChoiceAnswer('${option.replace(/'/g, "\\'")}', '${word.translation.replace(/'/g, "\\'")}')">
-                                <span>${option}</span>
-                                <span class="option-status"></span>
-                            </button>
-                        `).join('')}
-                    </div>
-
-                    <button class="btn btn-primary hidden" id="next-btn" onclick="nextTestQuestion()">
-                        ➡️ Следующее слово
-                    </button>
-
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: ${(appData.currentWordIndex / appData.currentTest.length) * 100}%"></div>
-                    </div>
-                </main>
-
-                <nav class="navigation">
-                    <div class="nav-content">
-                        <button class="nav-item" onclick="showPage('home')"><span class="nav-icon">🏠</span><span>Главная</span></button>
-                        <button class="nav-item" onclick="showTopicsPage()"><span class="nav-icon">📚</span><span>Темы</span></button>
-                        <button class="nav-item active"><span class="nav-icon">🎯</span><span>Тест</span></button>
-                        <button class="nav-item" onclick="showPage('dictionary')"><span class="nav-icon">📖</span><span>Словарь</span></button>
-                    </div>
-                </nav>
-            `;
-        }
-
-        function checkChoiceAnswer(selected, correct) {
-            const options = document.querySelectorAll('.option-btn');
-            const nextBtn = document.getElementById('next-btn');
-            
-            options.forEach(option => {
-                const optionText = option.querySelector('span:first-child').textContent;
-                const status = option.querySelector('.option-status');
-                option.style.pointerEvents = 'none';
-                if (optionText === correct) {
-                    option.classList.add('correct');
-                    status.textContent = '✓';
-                    status.style.color = '#00ff88';
-                }
-                if (optionText === selected && optionText !== correct) {
-                    option.classList.add('incorrect');
-                    status.textContent = '✗';
-                    status.style.color = '#ff4444';
-                }
-            });
-            
-            const isCorrect = selected === correct;
-            appData.testResults.push({
-                word: appData.currentTest[appData.currentWordIndex],
-                selected,
-                correct,
-                isCorrect
-            });
-            
-            if (isCorrect) appData.score++;
-            else appData.incorrectAnswers.push(appData.currentTest[appData.currentWordIndex]);
-            
-            nextBtn.classList.remove('hidden');
-        }
-
-        function showWritingTest(word) {
-            const app = document.getElementById('app');
-            app.innerHTML = `
-                <header class="header"><div class="header-content"><div class="logo-text">✏️ Письменный тест</div><div style="color: #00d4ff;">${appData.currentWordIndex + 1}/${appData.currentTest.length}</div></div></header>
-                <main class="main-content">
-                    <div class="test-word"><h1 style="font-size: 36px;">${word.original}</h1><p>Напишите перевод на русском</p></div>
-                    <input type="text" class="test-input" id="answer-input" placeholder="Введите перевод..." onkeypress="if(event.key === 'Enter') checkWritingAnswer()">
-                    <div id="result-message"></div>
-                    <button class="btn btn-primary hidden" id="next-btn" onclick="nextTestQuestion()">➡️ Следующее слово</button>
-                    <div class="progress-bar"><div class="progress-fill" style="width: ${(appData.currentWordIndex / appData.currentTest.length) * 100}%"></div></div>
-                </main>
-                <nav class="navigation"><div class="nav-content"><button class="nav-item" onclick="showPage('home')"><span class="nav-icon">🏠</span><span>Главная</span></button><button class="nav-item" onclick="showTopicsPage()"><span class="nav-icon">📚</span><span>Темы</span></button><button class="nav-item active"><span class="nav-icon">🎯</span><span>Тест</span></button><button class="nav-item" onclick="showPage('dictionary')"><span class="nav-icon">📖</span><span>Словарь</span></button></div></nav>
-            `;
-            document.getElementById('answer-input').focus();
-        }
-
-        function checkWritingAnswer() {
-            const input = document.getElementById('answer-input');
-            const resultMessage = document.getElementById('result-message');
-            const nextBtn = document.getElementById('next-btn');
-            const currentWord = appData.currentTest[appData.currentWordIndex];
-            const userAnswer = input.value.trim().toLowerCase();
-            const correctAnswer = currentWord.translation.toLowerCase();
-            const isCorrect = userAnswer === correctAnswer;
-            
-            if (isCorrect) {
-                input.classList.add('correct');
-                resultMessage.innerHTML = '<p style="color: #00ff88;">✓ Правильно!</p>';
-                appData.score++;
-            } else {
-                input.classList.add('incorrect');
-                resultMessage.innerHTML = `<p style="color: #ff4444;">✗ Неправильно</p><p style="color: #00ff88;">Правильный ответ: ${currentWord.translation}</p>`;
-                appData.incorrectAnswers.push(currentWord);
-            }
-            appData.testResults.push({ word: currentWord, selected: userAnswer, correct: correctAnswer, isCorrect });
-            input.disabled = true;
-            nextBtn.classList.remove('hidden');
-        }
-
-        function showReverseTest(word) {
-            const app = document.getElementById('app');
-            app.innerHTML = `
-                <header class="header"><div class="header-content"><div class="logo-text">🔄 Обратный тест</div><div style="color: #00d4ff;">${appData.currentWordIndex + 1}/${appData.currentTest.length}</div></div></header>
-                <main class="main-content">
-                    <div class="test-word"><h1 style="font-size: 36px;">${word.translation}</h1><p>Напишите перевод на немецком</p></div>
-                    <input type="text" class="test-input" id="answer-input" placeholder="Введите перевод..." onkeypress="if(event.key === 'Enter') checkReverseAnswer()">
-                    <div id="result-message"></div>
-                    <button class="btn btn-primary hidden" id="next-btn" onclick="nextTestQuestion()">➡️ Следующее слово</button>
-                    <div class="progress-bar"><div class="progress-fill" style="width: ${(appData.currentWordIndex / appData.currentTest.length) * 100}%"></div></div>
-                </main>
-                <nav class="navigation"><div class="nav-content"><button class="nav-item" onclick="showPage('home')"><span class="nav-icon">🏠</span><span>Главная</span></button><button class="nav-item" onclick="showTopicsPage()"><span class="nav-icon">📚</span><span>Темы</span></button><button class="nav-item active"><span class="nav-icon">🎯</span><span>Тест</span></button><button class="nav-item" onclick="showPage('dictionary')"><span class="nav-icon">📖</span><span>Словарь</span></button></div></nav>
-            `;
-            document.getElementById('answer-input').focus();
-        }
-
-        function checkReverseAnswer() {
-            const input = document.getElementById('answer-input');
-            const resultMessage = document.getElementById('result-message');
-            const nextBtn = document.getElementById('next-btn');
-            const currentWord = appData.currentTest[appData.currentWordIndex];
-            const userAnswer = input.value.trim().toLowerCase();
-            const correctAnswer = currentWord.original.toLowerCase();
-            const isCorrect = userAnswer === correctAnswer;
-            
-            if (isCorrect) {
-                input.classList.add('correct');
-                resultMessage.innerHTML = '<p style="color: #00ff88;">✓ Правильно!</p>';
-                appData.score++;
-            } else {
-                input.classList.add('incorrect');
-                resultMessage.innerHTML = `<p style="color: #ff4444;">✗ Неправильно</p><p style="color: #00ff88;">Правильный ответ: ${currentWord.original}</p>`;
-                appData.incorrectAnswers.push(currentWord);
-            }
-            appData.testResults.push({ word: currentWord, selected: userAnswer, correct: correctAnswer, isCorrect });
-            input.disabled = true;
-            nextBtn.classList.remove('hidden');
-        }
-
-        function nextTestQuestion() {
-            appData.currentWordIndex++;
-            showTestQuestion();
-        }
-
-        function showTestResults() {
-            const accuracy = Math.round((appData.score / appData.testResults.length) * 100);
-            const topic = appData.currentTopic && appData.currentTopic !== 'all' ? wordTopics[appData.currentTopic] : null;
-            
-            const app = document.getElementById('app');
-            app.innerHTML = `
-                <header class="header"><div class="header-content"><div class="logo-text">📊 Результаты${topic ? ': ' + topic.name : ''}</div><button onclick="showPage('home')" style="background: none; border: none; color: #00d4ff;">🏠 Главная</button></div></header>
-                <main class="main-content">
-                    <div class="card"><div class="test-result"><h1>${accuracy >= 80 ? '🎉 Отлично!' : accuracy >= 60 ? '👍 Хорошо!' : '💪 Продолжайте учиться!'}</h1><p>Результаты теста${topic ? ' по теме "' + topic.name + '"' : ''}:</p><div style="font-size: 48px; color: #00d4ff;">${accuracy}%</div><p>Правильных ответов: ${appData.score} из ${appData.testResults.length}</p></div></div>
-                    ${appData.incorrectAnswers.length > 0 ? `<div class="card"><h3>Ошибки для повторения:</h3><div class="test-options">${appData.incorrectAnswers.map(word => `<div class="result-item incorrect"><div><strong>${word.original}</strong><div style="color: #666;">${word.translation}</div></div><div style="color: #ff4444;">✗</div></div>`).join('')}</div></div>` : ''}
-                    <div class="grid grid-2"><button class="btn btn-secondary" onclick="showTestSelection()">📋 Новый тест</button><button class="btn btn-primary" onclick="${topic ? `showTopicWords('${appData.currentTopic}')` : 'showTopicsPage()'}">📚 ${topic ? 'Учить тему' : 'Учить слова'}</button></div>
-                </main>
-            `;
-        }
-
-        function showLearnPage() {
-            const app = document.getElementById('app');
-            app.innerHTML = `
-                <header class="header"><div class="header-content"><div class="logo-text">📚 Все слова</div><button onclick="showTopicsPage()" style="background: none; border: none; color: #00d4ff;">← Назад</button></div></header>
-                <main class="main-content"><div class="card"><h2>Все немецкие слова (еда и кухня)</h2><p>Нажмите на карточку, чтобы увидеть перевод</p><div class="grid">${getAllWords().map(word => `<div class="card word-card" onclick="showWordTranslation(${word.id})"><div class="word-original">${word.original}</div><div class="word-translation hidden" id="translation-${word.id}">${word.translation}</div></div>`).join('')}</div></div></main>
-                <nav class="navigation"><div class="nav-content"><button class="nav-item" onclick="showPage('home')"><span class="nav-icon">🏠</span><span>Главная</span></button><button class="nav-item active"><span class="nav-icon">📚</span><span>Темы</span></button><button class="nav-item" onclick="showTestSelection()"><span class="nav-icon">🎯</span><span>Тест</span></button><button class="nav-item" onclick="showPage('dictionary')"><span class="nav-icon">📖</span><span>Словарь</span></button></div></nav>
-            `;
-        }
-
-        function showWordTranslation(wordId) {
-            const translation = document.getElementById(`translation-${wordId}`);
-            if (translation) translation.classList.toggle('hidden');
-        }
-
-        function showPage(page) {
-            console.log('📄 Showing page:', page);
-            appData.currentPage = page;
-            if (page === 'home') showMainInterface();
-            else if (page === 'learn') showLearnPage();
-            else if (page === 'dictionary') showDictionary();
-        }
-
-        function showDictionary() {
-            const app = document.getElementById('app');
-            app.innerHTML = `
-                <header class="header"><div class="header-content"><div class="logo-text">📖 Весь словарь</div><button onclick="showPage('home')" style="background: none; border: none; color: #00d4ff;">← Назад</button></div></header>
-                <main class="main-content">${Object.values(wordTopics).map(topic => `<div class="card"><h3>${topic.icon} ${topic.name}</h3><div class="test-options">${topic.words.map(word => `<div class="result-item correct"><div><strong>${word.original}</strong><div style="color: #666;">${word.translation}</div></div><div style="color: #00ff88;">✓</div></div>`).join('')}</div></div>`).join('')}</main>
-                <nav class="navigation"><div class="nav-content"><button class="nav-item" onclick="showPage('home')"><span class="nav-icon">🏠</span><span>Главная</span></button><button class="nav-item" onclick="showTopicsPage()"><span class="nav-icon">📚</span><span>Темы</span></button><button class="nav-item" onclick="showTestSelection()"><span class="nav-icon">🎯</span><span>Тест</span></button><button class="nav-item active"><span class="nav-icon">📖</span><span>Словарь</span></button></div></nav>
-            `;
-        }
-
-        function shuffleArray(array) {
-            const shuffled = [...array];
-            for (let i = shuffled.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-            }
-            return shuffled;
-        }
-
-        function initApp() {
-            console.log('🔧 Initializing app...');
-            initTelegram();
-            setTimeout(() => {
-                console.log('✅ App ready!');
-                showMainInterface();
-            }, 2000);
-        }
-
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initApp);
-        } else {
-            initApp();
-        }
-
-        window.showPage = showPage;
-        window.showTopicsPage = showTopicsPage;
-        window.showTopicWords = showTopicWords;
-        window.showTopicTestSelection = showTopicTestSelection;
-        window.showTopicTestModeSelection = showTopicTestModeSelection;
-        window.showTestSelection = showTestSelection;
-        window.showTestModeSelection = showTestModeSelection;
-        window.startTest = startTest;
-        window.checkChoiceAnswer = checkChoiceAnswer;
-        window.checkWritingAnswer = checkWritingAnswer;
-        window.checkReverseAnswer = checkReverseAnswer;
-        window.nextTestQuestion = nextTestQuestion;
-        window.showWordTranslation = showWordTranslation;
-    </script>
+window.showPage=showPage;window.showTopicsPage=showTopicsPage;window.showSubcategoriesPage=showSubcategoriesPage;
+window.showTopicWords=showTopicWords;window.showTopicTestSelection=showTopicTestSelection;
+window.showTopicTestModeSelection=showTopicTestModeSelection;window.showTestSelection=showTestSelection;
+window.showTestModeSelection=showTestModeSelection;window.startTest=startTest;
+window.checkChoiceAnswer=checkChoiceAnswer;window.checkWritingAnswer=checkWritingAnswer;
+window.checkReverseAnswer=checkReverseAnswer;window.nextTestQuestion=nextTestQuestion;
+window.showWordTranslation=showWordTranslation;window.filterDictionary=filterDictionary;
+</script>
+<script src="https://www.genspark.ai/sandbox_inspect.js"></script><script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","spa":2}' crossorigin="anonymous"></script>
 </body>
 </html>
